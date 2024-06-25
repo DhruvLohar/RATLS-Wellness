@@ -2,11 +2,13 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import Colors from '../../theme/colors';
+import { useRouter } from 'expo-router';
 
 const initialDate = new Date().toLocaleDateString('en-Us');
 
 export default function CalendarListScreen() {
     const [selected, setSelected] = useState(initialDate);
+    const router = useRouter()
 
     const marked = useMemo(() => {
         return {
@@ -25,7 +27,8 @@ export default function CalendarListScreen() {
     }, [selected]);
 
     const onDayPress = useCallback((day) => {
-        setSelected(day.dateString);
+        router.push(`/journal/${day.dateString}`)
+        // setSelected(day.dateString);
     }, []);
 
     return (

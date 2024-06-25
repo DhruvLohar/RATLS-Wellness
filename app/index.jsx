@@ -1,7 +1,15 @@
 import { Redirect, Stack } from 'expo-router';
 import { useSession } from '../hooks/auth';
 import { Text, View } from 'react-native';
+import * as Notifications from 'expo-notifications';
 
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+    }),
+});
 
 export default function AppLayout() {
     const { session, isLoading } = useSession();
@@ -21,5 +29,5 @@ export default function AppLayout() {
     // }
 
     // This layout can be deferred because it's not the root layout.
-    return <Redirect href={'/auth/login'} />
+    return <Redirect href={'(tabs)/home'} />
 }

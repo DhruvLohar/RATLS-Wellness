@@ -63,7 +63,7 @@ export default function Home() {
                     data={data}
                     spacing={68}
                     color={Colors.primary}
-                    startFillColor={Colors.primary}
+                    startFillColor={Colors.secondary}
                     rulesType="solid"
                     yAxisThickness={0}
                     xAxisThickness={0}

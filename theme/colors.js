@@ -1,5 +1,7 @@
 const Colors = {
-    primary: '#4956F4',
+    primary: '#626FFF',
+    secondary: '#B3C0FF',
+    cardBg: '#FDF8F8',
 
     muted: '#B6B6B6',
     dark: '#212121',

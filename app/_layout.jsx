@@ -11,6 +11,7 @@ import {
     Poppins_800ExtraBold
 } from "@expo-google-fonts/poppins";
 import { SessionProvider } from "../hooks/auth";
+import Header from "../components/Header";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,9 +39,19 @@ export default function Layout() {
         <SessionProvider>
             <Stack
                 screenOptions={{
-                    headerShown: false,
+                    headerShown: false
                 }}
             >
+                <Stack.Screen
+                    name="journal/[date]"
+                    initialParams={{
+                        name: "Create or Edit Journal"
+                    }}
+                    options={{
+                        header: ({ route }) => <Header route={route} />,
+                        headerShown: true
+                    }}
+                />
             </Stack>
         </SessionProvider>
     )

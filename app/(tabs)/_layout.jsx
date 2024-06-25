@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Colors from "../../theme/colors";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
+import Header from "../../components/Header";
 
 const TabIcon = memo(({ Icon, focused }) => {
     return (
@@ -22,21 +23,6 @@ const TabIcon = memo(({ Icon, focused }) => {
         </View>
     );
 });
-
-const Header = memo(({ route }) => {
-    return (
-        <SafeAreaView style={styles.headerContainer}>
-            <StatusBar style="dark" />
-            <Text style={styles.headerText}>{route?.params?.name || ""}</Text>
-            {/* <LinearGradient
-                colors={[Colors.light, 'transparent']}
-                style={styles.gradient}
-                locations={[0.2, 1]}
-            /> */}
-        </SafeAreaView>
-    )
-})
-
 
 export default function TabsLayout() {
     return (
@@ -97,25 +83,3 @@ export default function TabsLayout() {
         </Tabs>
     )
 }
-
-const styles = StyleSheet.create({
-    headerContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        height: 100,
-        backgroundColor: Colors.light,
-        position: 'relative'
-    },
-    headerText: {
-        fontFamily: 'Poppins_600SemiBold',
-        fontSize: 16,
-    },
-    gradient: {
-        position: 'absolute',
-        bottom: -20,
-        left: 0,
-        right: 0,
-        height: 30, // Adjust the height to control the fade effect
-    },
-})
