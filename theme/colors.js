@@ -5,7 +5,9 @@ const Colors = {
     dark: '#212121',
     light: '#FFFFFF',
 
-    inputBG: '#EAE8E8'
+    inputBG: '#EAE8E8',
+
+    readOnlyJournals: '#FF964F',
 }
 
 export default Colors;

@@ -13,7 +13,7 @@ export default function Login() {
     const router = useRouter();
 
     function handleLogin() {
-        console.log("Handle Login Here")
+        router.replace('(tabs)/home')
     }
 
     function handleGoogleLogin() {

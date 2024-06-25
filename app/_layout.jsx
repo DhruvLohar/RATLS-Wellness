@@ -10,6 +10,7 @@ import {
     Poppins_700Bold,
     Poppins_800ExtraBold
 } from "@expo-google-fonts/poppins";
+import { SessionProvider } from "../hooks/auth";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,11 +35,13 @@ export default function Layout() {
     }
 
     return (
-        <Stack
-            screenOptions={{
-                headerShown: false,
-            }}
-        >
-        </Stack>
+        <SessionProvider>
+            <Stack
+                screenOptions={{
+                    headerShown: false,
+                }}
+            >
+            </Stack>
+        </SessionProvider>
     )
 }

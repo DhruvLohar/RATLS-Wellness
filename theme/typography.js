@@ -8,13 +8,12 @@ const Typography = StyleSheet.create({
         fontFamily: 'Poppins_800ExtraBold', // Ensure you have the Poppins font installed
     },
     heading2: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 26,
         color: Colors.dark, // Adjust color as needed
-        fontFamily: 'Poppins_700Bold', // Ensure you have the Poppins font installed
+        fontFamily: 'Poppins_800ExtraBold', // Ensure you have the Poppins font installed
     },
     heading3: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: '600',
         color: Colors.dark, // Adjust color as needed
         fontFamily: 'Poppins_600SemiBold', // Ensure you have the Poppins font installed
