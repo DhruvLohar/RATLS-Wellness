@@ -48,12 +48,28 @@ export default function Tracker() {
             </Pressable>
 
             <View style={styles.row}>
-                <Pressable style={styles.box}>
-                    <Text style={[Typography.heading3, { color: Colors.secondary }]}>Sounds</Text>
-                </Pressable>
-                <Pressable style={styles.box}>
-                    <Text style={[Typography.heading3, { color: Colors.secondary }]}>Stories</Text>
-                </Pressable>
+                <View style={[styles.box, { backgroundColor: '#919AFF' }]}>
+                    <Text style={[Typography.heading3, { color: Colors.light }]}>Dream</Text>
+                    <Text style={[Typography.captionText, { color: Colors.light, marginTop: -5 }]}>MUSIC</Text>
+
+                    <Pressable style={[
+                        styles.cardBtn,
+                        {backgroundColor: Colors.light}
+                    ]}>
+                        <Text style={{fontWeight: 'bold', color: Colors.dark}}>Explore</Text>
+                    </Pressable>
+                </View>
+                <View style={[styles.box, { backgroundColor: '#FDCE83' }]}>
+                    <Text style={[Typography.heading3, { color: Colors.dark }]}>Stories</Text>
+                    <Text style={[Typography.captionText, { color: Colors.dark, marginTop: -5 }]}>READ</Text>
+
+                    <Pressable style={[
+                        styles.cardBtn,
+                        {backgroundColor: Colors.dark}
+                    ]}>
+                        <Text style={{fontWeight: 'bold', color: Colors.light}}>Explore</Text>
+                    </Pressable>
+                </View>
             </View>
 
             <View style={{ width: '100%', marginVertical: 15 }}>
@@ -129,12 +145,20 @@ const styles = StyleSheet.create({
     },
     box: {
         flex: 1,
-        height: 100,
-        backgroundColor: Colors.cardBg,
+        height: 200,
         margin: 5,
         borderRadius: 10,
+        padding: 20,
 
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'flex-start'
     },
+    cardBtn: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 30,
+        marginTop: 15,
+    }
 })

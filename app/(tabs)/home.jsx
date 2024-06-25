@@ -16,9 +16,9 @@ export default function Home() {
     ]
 
     const data = [
-        { value: 15 }, { value: 28 }, 
-        { value: 18 }, { value: 30 }, 
-        { value: 5 }, { value: 48 }, 
+        { value: 15 }, { value: 28 },
+        { value: 18 }, { value: 30 },
+        { value: 5 }, { value: 48 },
         { value: 35 }, { value: 43 }
     ];
 
@@ -31,7 +31,6 @@ export default function Home() {
 
             <View style={[styles.moodContainer]}>
                 <Text style={[Typography.heading3, { color: Colors.light }]}>How do you feel today?</Text>
-                <Text style={[Typography.bodyText, { color: Colors.muted }]}>Last update was about 8 hours ago</Text>
 
                 <View style={[
                     Layout.flexRowCenter,
@@ -50,7 +49,7 @@ export default function Home() {
 
             <View style={{ width: '100%', marginVertical: 15 }}>
                 <Text style={[Typography.heading3]}>Time Spent in Last Week</Text>
-                <Text style={[Typography.bodyText, { 
+                <Text style={[Typography.bodyText, {
                     marginBottom: 15,
                     fontSize: 15,
                     color: Colors.muted
@@ -81,6 +80,11 @@ export default function Home() {
                     }}
                 />
             </View>
+
+            <Text style={Typography.heading3}>Recommended for you</Text>
+            <View style={styles.blogContainer}>
+                <Text>Mental asd</Text>
+            </View>
         </ScrollView>
     )
 }
@@ -94,5 +98,14 @@ const styles = StyleSheet.create({
         borderRadius: 20,
 
         alignItems: 'center'
+    },
+
+    blogContainer: {
+        width: '100%',
+        height: 120,
+        backgroundColor: Colors.cardBg,
+        borderRadius: 15,
+
+        padding: 10
     }
 })
