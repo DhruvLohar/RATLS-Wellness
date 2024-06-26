@@ -1,11 +1,13 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
+import { useSession } from '../../hooks/auth';
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
 
 export default function Home() {
+    const { session, isLoading } = useSession();
 
     const moods = [
         { emoji: '😣', label: 'Depressed' },
@@ -25,8 +27,8 @@ export default function Home() {
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
             <View style={[Layout.flexRowCenter, { width: '100%' }]}>
-                <Text style={Typography.heading2}>Hi, Dhruv Lohar</Text>
-                <Text style={Typography.heading3}>🔥 2</Text>
+                <Text style={Typography.heading2}>Hi, {session?.name || 'User'}</Text>
+                <Text style={Typography.heading3}>🔥 {session?.currentStreak}</Text>
             </View>
 
             <View style={[styles.moodContainer]}>

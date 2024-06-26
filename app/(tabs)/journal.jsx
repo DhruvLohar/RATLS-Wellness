@@ -1,42 +1,65 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import Colors from '../../theme/colors';
 import { useRouter } from 'expo-router';
+import { fetchFromAPI } from '../../hooks/api';
 
-const initialDate = new Date().toLocaleDateString('en-Us');
+function formatDate(iso=null) {
+    const date = iso ? new Date(iso) : new Date();
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
 
 export default function CalendarListScreen() {
-    const [selected, setSelected] = useState(initialDate);
+    const [pastScrollRange, setPastScrollRange] = useState(null);
+    const [marked, setMarked] = useState(null)
+
     const router = useRouter()
 
-    const marked = useMemo(() => {
-        return {
-            '2024-06-22': {
-                selectedTextColor: Colors.light,
-                selectedColor: Colors.readOnlyJournals,
-                selected: true
-            },
-            [selected]: {
-                selected: true,
-                disableTouchEvent: true,
-                selectedColor: Colors.primary,
-                selectedTextColor: Colors.light
-            }
-        };
-    }, [selected]);
-
     const onDayPress = useCallback((day) => {
-        router.push(`/journal/${day.dateString}`)
-        // setSelected(day.dateString);
+        console.log(day)
+        // router.push(`/journal/${day.dateString}`)
     }, []);
+
+    useEffect(() => {
+        async function fetchJournals() {
+            const { journals, pastMonthsRange } = await fetchFromAPI("journals/");
+
+            const data = {};
+            journals?.map(journal => {
+                const date = formatDate(journal?.createdAt);
+                data[date] = {
+                    selectedTextColor: Colors.light,
+                    selectedColor: Colors.readOnlyJournals,
+                    selected: true,
+                }
+            });
+            setPastScrollRange(pastMonthsRange);
+            setMarked(data);
+        }
+        fetchJournals();
+    }, [])
+
+    if (!pastScrollRange && !marked) {
+        return (
+            <View>
+                <Text>Loading ...</Text>
+            </View>
+        )
+    }
 
     return (
         <CalendarList
-            current={'2024-06-25'}
-            pastScrollRange={2}
-            futureScrollRange={2}
+            current={formatDate()}
+            pastScrollRange={pastScrollRange}
+            futureScrollRange={0}
             onDayPress={onDayPress}
+            displayLoadingIndicator
             markedDates={marked}
             renderHeader={renderCustomHeader}
             calendarHeight={390}

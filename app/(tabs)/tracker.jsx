@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 180,
         borderRadius: 20,
-        marginTop: 60,
+        marginTop: 80,
         backgroundColor: Colors.cardBg,
         padding: 20,
 
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
         objectFit: 'fill',
 
         position: 'absolute',
-        right: 2,
+        right: 4,
         bottom: 0,
         zIndex: 99
     },

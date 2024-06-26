@@ -9,13 +9,20 @@ import Input from "../../components/Input";
 import Button, { TextButton } from "../../components/Button";
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
+import { useSession } from "../../hooks/auth";
 
 export default function Login() {
 
     const router = useRouter();
+    const { signIn } = useSession();
 
-    function handleLogin(values) {
-        console.log(values)
+    async function handleLogin(values) {
+        const result = await signIn(values);
+        if (result) {
+            router.replace('/(tabs)/home');
+        } else {
+            alert("Invalid Credentials")
+        }
     }
 
     function handleGoogleLogin() {
@@ -30,7 +37,7 @@ export default function Login() {
             <Text style={[Typography.captionText]}>Lorem ipsum doler sit amet.</Text>
 
             <Formik
-                initialValues={{ email: '', password: '' }}
+                initialValues={{ email: 'dhruvlohar09@gmail.com', password: 'test' }}
                 onSubmit={handleLogin}
             >
                 {({ handleChange, handleSubmit, values }) => (
@@ -53,7 +60,7 @@ export default function Login() {
                             title="Sign in" 
                             onPress={handleSubmit} 
                             type={"fill"} 
-                            disabled={values.email === "" || values.password === ""}
+                            disabled={[values.email, values.password].includes("")}
                         />
                     </>
                 )}
