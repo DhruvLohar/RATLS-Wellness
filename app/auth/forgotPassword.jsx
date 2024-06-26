@@ -1,21 +1,22 @@
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
+import { Formik } from 'formik';
+import { useRouter } from "expo-router";
+import { Sms } from "iconsax-react-native";
+
 import Typography from "../../theme/typography";
 import Input from "../../components/Input";
-import Button, { TextButton } from "../../components/Button";
-import { useRouter } from "expo-router";
-import { Google, Lock, Sms } from "iconsax-react-native";
+import Button from "../../components/Button";
 import Layout from "../../theme/layout";
-import Colors from "../../theme/colors";
 
 export default function Login() {
 
     const router = useRouter();
 
-    function handleSubmit() {
-        console.log("Handle Forgot Pass")
+    function handleForgotPass(values) {
+        console.log(values)
     }
-    
+
     return (
         <View style={[Layout.screenView, { alignItems: "flex-start", justifyContent: "center" }]}>
             <StatusBar style={"dark"} />
@@ -26,13 +27,30 @@ export default function Login() {
                 secure.
             </Text>
 
-            <View style={{ marginBottom: 25, marginTop: 20 }}>
-                <Input placeHolder="Enter your email" type='email' IconPrefix={Sms} />
-            </View>
+            <Formik
+                initialValues={{ email: "" }}
+                onSubmit={handleForgotPass}
+            >
+                {({ handleChange, handleSubmit, values }) => (
+                    <>
+                        <View style={{ marginBottom: 25, marginTop: 20 }}>
+                            <Input 
+                                placeHolder="Enter your email" type='email' IconPrefix={Sms} 
+                                handleFormik={{ name: 'email', onChange: handleChange, value: values.email }}
+                            />
+                        </View>
 
-            <Button title="Recover" onPress={handleSubmit} type={"fill"} />
+                        <Button 
+                            title="Recover" 
+                            onPress={handleSubmit} 
+                            type={"fill"} 
+                            disabled={values.email === ''}
+                        />
+                    </>
+                )}
+            </Formik>
+
             <Button title="Go Back" onPress={() => router.push('/auth/login')} type={"outline"} />
-
 
         </View>
     )

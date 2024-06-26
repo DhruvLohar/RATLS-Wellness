@@ -3,7 +3,7 @@ import { StyleSheet, Text, Pressable } from 'react-native';
 import Colors from '../theme/colors';
 import Typography from '../theme/typography';
 
-export default function Button({ title, onPress, type, PrefixIcon, style, textStyles }) {
+export default function Button({ title, onPress, type, PrefixIcon, style, textStyles, ...otherProps }) {
     const textColor = (type === 'outline') ? Colors.dark : Colors.light
 
     return (
@@ -14,6 +14,7 @@ export default function Button({ title, onPress, type, PrefixIcon, style, textSt
                 (type === "outline") && styles.buttonOutline,
                 style
             ]}
+            {...otherProps}
         >
             {PrefixIcon && <PrefixIcon size={24} color={textColor} variant="Bold" />}
             <Text

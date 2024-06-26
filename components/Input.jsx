@@ -3,8 +3,13 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native'
 import { Eye, EyeSlash } from 'iconsax-react-native'
 import Colors from '../theme/colors'
 
-export default function Input({ placeHolder, iconNameSuffix, type, IconPrefix, isTextarea }) {
+export default function Input({
+    placeHolder, iconNameSuffix, type,
+    IconPrefix, isTextarea,
+    handleFormik
+}) {
 
+    const { name, onChange, value } = handleFormik;
     const [showPassword, setShowPassword] = useState(false)
 
     const toggleShowPassword = () => setShowPassword(!showPassword)
@@ -29,6 +34,9 @@ export default function Input({ placeHolder, iconNameSuffix, type, IconPrefix, i
                 secureTextEntry={type === 'current-password' && !showPassword}
                 keyboardType={type === 'email' ? 'email-address' : 'default'}
                 multiline={isTextarea}
+
+                onChangeText={onChange(name)}
+                value={value}
             />
 
             {iconNameSuffix && type === 'current-password' && (

@@ -29,5 +29,5 @@ export default function AppLayout() {
     // }
 
     // This layout can be deferred because it's not the root layout.
-    return <Redirect href={'(tabs)/home'} />
+    return <Redirect href={'/auth/login'} />
 }
