@@ -1,21 +1,43 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { LineChart } from "react-native-gifted-charts";
 
 import { useSession } from '../../hooks/auth';
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
+import LineChartView from "../../components/LineChartView";
+import PieChartView from "../../components/PieChartView";
 
 export default function Home() {
     const { session, isLoading } = useSession();
 
     const moods = [
-        { emoji: '😣', label: 'Depressed' },
-        { emoji: '🥲', label: 'Sad' },
-        { emoji: '🙂', label: 'Neutral' },
-        { emoji: '😁', label: 'Happy' },
-        { emoji: '😂', label: 'Overjoy' },
+        { "name": "Happy", "emoji": "😊" },
+        { "name": "Optimistic", "emoji": "😁" },
+        { "name": "Fine", "emoji": "🙂" },
+        { "name": "Neutral", "emoji": "😐" },
+        { "name": "Tired", "emoji": "😴" },
+        { "name": "Sad", "emoji": "😢" },
+        { "name": "Depressed", "emoji": "😞" },
+        { "name": "Inadequate", "emoji": "😔" },
+        { "name": "Lost", "emoji": "😕" },
+        { "name": "Unmotivated", "emoji": "😒" },
+        { "name": "Anxious", "emoji": "😟" },
+        { "name": "Stressed", "emoji": "😫" },
+        { "name": "Angry", "emoji": "😠" },
+        { "name": "Guilty", "emoji": "😣" }
     ]
+
+    const navCards = [
+        [
+            { title: 'Check-in', path: '/check-in' },
+            { title: 'Journal', path: '/(tabs)/journal' },
+        ],
+        [
+            { title: 'Meditation & Yoga', path: '/(tabs)/meditate' },
+            { title: 'Tracker', path: '/(tabs)/tracker' },
+        ]
+    ]
+
 
     const data = [
         { value: 15 }, { value: 28 },
@@ -31,67 +53,63 @@ export default function Home() {
                 <Text style={Typography.heading3}>🔥 {session?.currentStreak}</Text>
             </View>
 
-            <View style={[styles.moodContainer]}>
-                <Text style={[Typography.heading3, { color: Colors.light }]}>How do you feel today?</Text>
+            <View
+                style={[styles.quoteContainer, Layout.cardView]}
+            >
+                <Text>The future belongs to those who believe in the beauty of their dreams.</Text>
+            </View>
 
-                <View style={[
+            <Text style={[Typography.heading3]}>How are you feeling today ?</Text>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={[
                     Layout.flexRowCenter,
-                    { width: '100%', marginTop: 20 }
-                ]}>
-                    {moods.map((mood, i) => (
-                        <View style={{ alignItems: 'center' }} key={i}>
-                            <View style={{ padding: 10, backgroundColor: Colors.dark, marginBottom: 10, borderRadius: 100 }}>
-                                <Text style={{ fontSize: 25 }}>{mood.emoji}</Text>
+                    { marginVertical: 10 }
+                ]}
+            >
+                {moods.map((mood, i) => (
+                    <View style={{ alignItems: 'center', marginRight: 15 }} key={i}>
+                        <Text style={{ fontSize: 46, marginBottom: 5 }}>{mood.emoji}</Text>
+                        <Text style={[Typography.bodyText, { color: Colors.muted, fontSize: 12 }]}>{mood.name}</Text>
+                    </View>
+                ))}
+            </ScrollView>
+
+            <View style={styles.navCardBase}>
+                {navCards.map((group, i) => (
+                    <View style={styles.navCardRow} key={i}>
+                        {group.map(card => (
+                            <View style={[Layout.cardView, styles.navCard]} key={card.path}>
+                                <Text>{card.title}</Text>
                             </View>
-                            <Text style={[Typography.bodyText, { color: Colors.light, fontSize: 12 }]}>{mood.label}</Text>
-                        </View>
-                    ))}
-                </View>
+                        ))}
+                    </View>
+                ))}
             </View>
 
-            <View style={{ width: '100%', marginVertical: 15 }}>
-                <Text style={[Typography.heading3]}>Time Spent in Last Week</Text>
-                <Text style={[Typography.bodyText, {
-                    marginBottom: 15,
-                    fontSize: 15,
-                    color: Colors.muted
-                }]}>Lorem ipsum doler sit amet.</Text>
+            <LineChartView 
+                title={"Time Spent in Last Week"}
+                desc={"Lorem ipsum doler sit amet."}
+                data={data} 
+            />
 
-                <LineChart
-                    areaChart
-                    curved
-                    hideDataPoints
-                    data={data}
-                    spacing={68}
-                    color={Colors.primary}
-                    startFillColor={Colors.secondary}
-                    rulesType="solid"
-                    yAxisThickness={0}
-                    xAxisThickness={0}
-                    noOfSections={5}
-                    maxValue={50}
-                    pointerConfig={{
-                        pointerStripUptoDataPoint: true,
-                        pointerStripColor: 'white',
-                        pointerStripWidth: 2,
-                        strokeDashArray: [2, 5],
-                        pointerColor: 'white',
-                        radius: 4,
-                        pointerLabelWidth: 100,
-                        pointerLabelHeight: 120,
-                    }}
-                />
-            </View>
-
-            <Text style={Typography.heading3}>Recommended for you</Text>
-            <View style={styles.blogContainer}>
-                <Text>Mental asd</Text>
-            </View>
+            <PieChartView 
+                title={"Your mood over the past month."}
+                desc={"Lorem ipsum doler sit amet."}
+                data={data}
+            />
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
+    quoteContainer: {
+        width: '100%',
+        height: 100,
+        marginVertical: 15,
+    },
+
     moodContainer: {
         width: '100%',
         backgroundColor: Colors.primary,
@@ -109,5 +127,25 @@ const styles = StyleSheet.create({
         borderRadius: 15,
 
         padding: 10
+    },
+
+    navCardBase: {
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 10
+    },
+    navCardRow: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10
+    },
+    navCard: {
+        width: "48%",
+        height: 100,
+        justifyContent: 'center'
     }
 })

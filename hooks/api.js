@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = "http://192.168.1.5:3000/";
-const accessToken = JSON.parse(SecureStore.getItem("session"))?.token || null;
+const API_URL = "http://192.168.1.150:3000/";
+const accessToken = SecureStore.getItem("session")?.token;
 
 axios.defaults.baseURL = API_URL;
 
@@ -17,8 +17,9 @@ export async function postToAPI(url, data) {
 }
 
 export async function fetchFromAPI(url) {
-  if (accessToken) {
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
+  console.log(accessToken);
+  if (accessToken) {    
+    axios.defaults.headers.common.Authorization = `Bearer ${JSON.parse(accessToken)}`
   }
   try {
     const res = await axios.get(url);

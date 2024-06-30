@@ -45,9 +45,9 @@ export function SessionProvider(props) {
         setStorageState(null)
     }
 
-    // useEffect(() => {
-    //     console.log("[👤] ", session)
-    // }, [session])
+    useEffect(() => {
+        console.log("[👤] ", session)
+    }, [session])
 
     return (
         <AuthContext.Provider

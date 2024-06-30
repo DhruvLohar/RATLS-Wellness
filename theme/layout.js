@@ -14,6 +14,14 @@ const Layout = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
+    },
+
+    cardView: {
+        padding: 10,
+        backgroundColor: Colors.cardBg,
+        borderWidth: 1,
+        borderColor: Colors.muted,
+        borderRadius: 20
     }
 });
 

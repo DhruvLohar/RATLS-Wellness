@@ -23,7 +23,7 @@ export default function CalendarListScreen() {
 
     const onDayPress = useCallback((day) => {
         console.log(day)
-        // router.push(`/journal/${day.dateString}`)
+        router.push(`/journal/${day.dateString}`)
     }, []);
 
     useEffect(() => {
