@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { useSession } from '../../hooks/auth';
 import Layout from "../../theme/layout";
@@ -38,7 +38,6 @@ export default function Home() {
         ]
     ]
 
-
     const data = [
         { value: 15 }, { value: 28 },
         { value: 18 }, { value: 30 },
@@ -49,7 +48,13 @@ export default function Home() {
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
             <View style={[Layout.flexRowCenter, { width: '100%' }]}>
-                <Text style={Typography.heading2}>Hi, {session?.name || 'User'}</Text>
+                <View style={[Layout.flexRowCenter]}>
+                    <Image source={{ uri: "https://avatarfiles.alphacoders.com/375/375167.png" }} style={styles.profileImage} />
+                    <View>
+                        <Text style={[Typography.heading2, { fontSize: 20 }]}>{session?.name || 'User'}</Text>
+                        <Text style={[Typography.bodyText, { fontSize: 12, marginTop: -4 }]}>Last time your opened was 1 day ago</Text>
+                    </View>
+                </View>
                 <Text style={Typography.heading3}>🔥 {session?.currentStreak}</Text>
             </View>
 
@@ -96,14 +101,20 @@ export default function Home() {
 
             <PieChartView 
                 title={"Your mood over the past month."}
-                desc={"Lorem ipsum doler sit amet."}
-                data={data}
+                desc={"This is your mood map, showing your mood distribution over the month."}
             />
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
+    profileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 100,
+        marginRight: 10
+    },
+
     quoteContainer: {
         width: '100%',
         height: 100,
