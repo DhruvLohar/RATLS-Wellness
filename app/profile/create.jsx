@@ -1,13 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { User, Calendar } from "iconsax-react-native";
 import { Formik } from 'formik';
 import * as ImagePicker from 'expo-image-picker';
 
 import Typography from "../../theme/typography";
 import Input from "../../components/Input";
-import Button, { TextButton } from "../../components/Button";
+import Button from "../../components/Button";
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import { useState } from "react";
@@ -17,8 +16,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 function Info({ title, children }) {
     return (
-        <View style={styles.infoContainer}>
-            <Text style={[Typography.heading3, { fontSize: 18, opacity: .6 }]}>{title}</Text>
+        <View style={{ marginVertical: 5 }}>
+            <Text style={[Typography.heading3, { fontSize: 18, opacity: .6, marginBottom: -4 }]}>{title}</Text>
             {children}
         </View>
     )
@@ -57,7 +56,7 @@ export default function createProfile() {
 
         console.log('Form Data:', values);
         console.log('Image URI:', image, avatar);
-        // Implement your logic to save data and image
+        
     }
 
     const renderItem = ({ item, index }) => (
@@ -72,15 +71,15 @@ export default function createProfile() {
     );
 
     return (
-        <SafeAreaView style={[Layout.screenView, { alignItems: 'flex-start', marginVertical: 30 }]}>
-            <ScrollView nestedScrollEnabled>
+        <SafeAreaView style={[Layout.screenView, { alignItems: 'flex-start' }]}>
+            <ScrollView nestedScrollEnabled contentContainerStyle={{ paddingTop: 30 }}>
                 <StatusBar style="dark" />
 
                 <Text style={[Typography.heading1]}>Create Profile</Text>
                 <Text style={[Typography.captionText]}>Please enter the information and choose yourself an avatar or upload your own!</Text>
 
                 <View style={{
-                    marginVertical: 15,
+                    marginVertical: 20,
                     height: 100,
                 }}>
                     {image && (
@@ -104,8 +103,8 @@ export default function createProfile() {
                 </View>
 
                 <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'space-between' }]}>
-                    <Button title={"Upload Image"} style={{ width: "55%" }} onPress={handleUploadImage} />
-                    <Button title={"Remove"} type="outline" style={{ width: "40%" }} onPress={removeUploadImage} />
+                    <Button title={"Upload Image"} style={{ width: "56%" }} onPress={handleUploadImage} />
+                    <Button title={"Remove"} type="outline" style={{ width: "42%" }} onPress={removeUploadImage} />
                 </View>
 
                 <Text style={[Typography.heading3, { marginVertical: 20 }]}>Tell us more about yourself</Text>

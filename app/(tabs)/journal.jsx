@@ -56,7 +56,7 @@ export default function CalendarListScreen() {
     return (
         <CalendarList
             current={formatDate()}
-            pastScrollRange={pastScrollRange}
+            pastScrollRange={3}
             futureScrollRange={0}
             onDayPress={onDayPress}
             displayLoadingIndicator

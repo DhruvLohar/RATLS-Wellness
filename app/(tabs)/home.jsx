@@ -6,6 +6,7 @@ import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
 import LineChartView from "../../components/LineChartView";
 import PieChartView from "../../components/PieChartView";
+import { Link } from "expo-router";
 
 export default function Home() {
     const { session, isLoading } = useSession();
@@ -48,13 +49,15 @@ export default function Home() {
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
             <View style={[Layout.flexRowCenter, { width: '100%' }]}>
-                <View style={[Layout.flexRowCenter]}>
-                    <Image source={{ uri: "https://avatarfiles.alphacoders.com/375/375167.png" }} style={styles.profileImage} />
-                    <View>
-                        <Text style={[Typography.heading2, { fontSize: 20 }]}>{session?.name || 'User'}</Text>
-                        <Text style={[Typography.bodyText, { fontSize: 12, marginTop: -4 }]}>Last time your opened was 1 day ago</Text>
+                <Link href={"/profile"}>
+                    <View style={[Layout.flexRowCenter]}>
+                        <Image source={{ uri: "https://avatarfiles.alphacoders.com/375/375167.png" }} style={styles.profileImage} />
+                        <View>
+                            <Text style={[Typography.heading2, { fontSize: 22 }]}>{session?.name || 'User'}</Text>
+                            <Text style={[Typography.captionText, { fontSize: 12, marginTop: -6 }]}>Last time your opened was 1 day ago</Text>
+                        </View>
                     </View>
-                </View>
+                </Link>
                 <Text style={Typography.heading3}>🔥 {session?.currentStreak}</Text>
             </View>
 
@@ -109,9 +112,9 @@ export default function Home() {
 
 const styles = StyleSheet.create({
     profileImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 100,
+        width: 60,
+        height: 60,
+        borderRadius: 120,
         marginRight: 10
     },
 

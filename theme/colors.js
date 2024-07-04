@@ -8,7 +8,7 @@ const Colors = {
     dark :'#292D32',
     light: '#FFFFFF',
 
-    inputBG: '#EAE8E8',
+    inputBG: '#F7F5F5',
 
     readOnlyJournals: '#FF964F',
 }

@@ -56,13 +56,14 @@ export default function Layout() {
                     }}
                 />
                 <Stack.Screen
-                    name="profile/[uid]"
+                    name="profile/edit"
                     initialParams={{
                         name: "Edit Profile"
                     }}
                     options={{
                         header: ({ route }) => <Header route={route} />,
-                        headerShown: true
+                        headerShown: true,
+                        animation: 'slide_from_bottom'
                     }}
                 />
 

@@ -11,14 +11,14 @@ import { Edit2 } from "iconsax-react-native";
 function Info({ title, value }) {
     return (
         <View style={styles.infoContainer}>
-            <Text style={[Typography.heading3, { fontSize: 18, color: Colors.muted }]}>{title}</Text>
-            <Text style={[Typography.bodyText, { fontSize: 20 }]}>{value}</Text>
+            <Text style={[Typography.heading3, { fontSize: 16, color: Colors.muted }]}>{title}</Text>
+            <Text style={[Typography.bodyText, { fontSize: 18 }]}>{value}</Text>
         </View>
     )
 }
 
 export default function Profile() {
-    
+
     const router = useRouter()
     const { signOut, session } = useSession()
 
@@ -26,31 +26,36 @@ export default function Profile() {
         signOut();
         router.replace('/auth/login');
     }
-    
+
     return (
-        <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
-            
+        <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start', marginTop: 20 }}>
+
             <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'flex-start' }]}>
-                <Image 
-                    source={{ uri: "https://avatarfiles.alphacoders.com/375/375167.png" }} 
+                <Image
+                    source={{ uri: "https://avatarfiles.alphacoders.com/375/375167.png" }}
                     style={styles.profile}
                 />
                 <View>
                     <Text style={Typography.heading2}>John Doe</Text>
                     <Text style={[Typography.captionText, { marginTop: -6, fontSize: 14 }]}>Last Login: Yesterday</Text>
                 </View>
-                <Edit2 color={Colors.dark} size={34} style={{marginLeft: 'auto'}} />
+
+                <Edit2
+                    color={Colors.dark} size={34}
+                    style={{ marginLeft: 'auto' }}
+                    onPress={() => router.push('/profile/edit')}
+                />
             </View>
-            
+
             <Text style={[Typography.heading3, { marginTop: 30 }]}>Personal Information</Text>
             <Info title="Email" value={"johndoe@gmail.com"} />
             <Info title="Gender" value={"Male"} />
             <Info title="Age" value={"19 years"} />
             <Info title="Meditation Experience" value={"14 Months"} />
 
-            <Button 
-                title={"Logout"} 
-                style={{ marginTop: 20 }} 
+            <Button
+                title={"Logout"}
+                style={{ marginTop: 20 }}
                 onPress={handleLogout}
             />
         </ScrollView>
@@ -66,6 +71,6 @@ const styles = StyleSheet.create({
     },
 
     infoContainer: {
-        marginVertical: 5
+        marginVertical: 12
     }
 })

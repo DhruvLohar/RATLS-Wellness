@@ -19,7 +19,7 @@ export default function Login() {
     async function handleLogin(values) {
         const result = await signIn(values);
         if (result) {
-            router.replace('/(tabs)/home');
+            router.replace('/');
         } else {
             alert("Invalid Credentials")
         }

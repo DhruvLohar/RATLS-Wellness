@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useStorageState } from './useStorageState';
-import { postToAPI } from './api';
+import { fetchFromAPI, postToAPI } from './api';
 
 const AuthContext = React.createContext({
     signIn: () => null,
     signOut: () => null,
+    refreshUser: () => null,
     session: null,
     isLoading: false,
 });
@@ -27,13 +28,7 @@ export function SessionProvider(props) {
         const data = await postToAPI("users/login/", values);
 
         if (data?.success) {
-            const session = {
-                id: data.user._id,
-                name: data.user.name,
-                token: data.user.accessToken,
-                currentStreak: data.user.currentStreak
-            }
-            setStorageState(session);
+            setStorageState(data.user);
         } else {
             alert("Something went wrong")
         }
@@ -45,6 +40,11 @@ export function SessionProvider(props) {
         setStorageState(null)
     }
 
+    async function refreshUser() {
+        const { user } = await fetchFromAPI('user/');
+        console.log(user); 
+    }
+
     useEffect(() => {
         console.log("[👤] ", session)
     }, [session])
@@ -54,6 +54,7 @@ export function SessionProvider(props) {
             value={{
                 signIn: signIn,
                 signOut: signOut,
+                refreshUser: refreshUser,
                 session,
                 isLoading,
             }}>
