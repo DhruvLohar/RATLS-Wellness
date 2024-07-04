@@ -36,7 +36,7 @@ export default function Login() {
                         <View style={{ marginBottom: 25, marginTop: 20 }}>
                             <Input 
                                 placeHolder="Enter your email" type='email' IconPrefix={Sms} 
-                                handleFormik={{ name: 'email', onChange: handleChange, value: values.email }}
+                                handleFormik={{ name: 'email-address', onChange: handleChange, value: values.email }}
                             />
                         </View>
 

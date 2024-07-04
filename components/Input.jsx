@@ -32,7 +32,8 @@ export default function Input({
                 placeholderTextColor={Colors.muted}
                 textAlignVertical={isTextarea ? 'top' : 'center'}
                 secureTextEntry={type === 'current-password' && !showPassword}
-                keyboardType={type === 'email' ? 'email-address' : 'default'}
+                // keyboardType={type === 'email' ? 'email-address' : 'default'}
+                keyboardType={type}
                 multiline={isTextarea}
 
                 onChangeText={onChange(name)}

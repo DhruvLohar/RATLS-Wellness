@@ -4,7 +4,8 @@ const Colors = {
     cardBg: '#FDF8F8',
 
     muted: '#B6B6B6',
-    dark: '#111315',
+    // dark: '#111315',
+    dark :'#292D32',
     light: '#FFFFFF',
 
     inputBG: '#EAE8E8',

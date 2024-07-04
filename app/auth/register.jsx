@@ -37,11 +37,11 @@ export default function Register() {
                     <>
                         <View style={{ marginBottom: 25, marginTop: 20 }}>
                             <Input 
-                                placeHolder="Enter your name" type='text' IconPrefix={User}
+                                placeHolder="Enter your name" type='default' IconPrefix={User}
                                 handleFormik={{ name: 'name', onChange: handleChange, value: values.name }}
                             />
                             <Input 
-                                placeHolder="Enter your email" type='email' IconPrefix={Sms} 
+                                placeHolder="Enter your email" type='email-address' IconPrefix={Sms} 
                                 handleFormik={{ name: 'email', onChange: handleChange, value: values.email }}
                             />
                             <Input 

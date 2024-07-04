@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = "http://192.168.1.5:3000/";
+export const API_URL = "http://192.168.1.5:3000/";
 const accessToken = SecureStore.getItem("session")?.token;
 
 axios.defaults.baseURL = API_URL;

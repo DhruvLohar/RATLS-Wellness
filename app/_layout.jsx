@@ -43,6 +43,30 @@ export default function Layout() {
                 }}
             >
                 <Stack.Screen
+                    name="profile/create"
+                />
+                <Stack.Screen
+                    name="profile/index"
+                    initialParams={{
+                        name: "My Profile"
+                    }}
+                    options={{
+                        header: ({ route }) => <Header route={route} />,
+                        headerShown: true
+                    }}
+                />
+                <Stack.Screen
+                    name="profile/[uid]"
+                    initialParams={{
+                        name: "Edit Profile"
+                    }}
+                    options={{
+                        header: ({ route }) => <Header route={route} />,
+                        headerShown: true
+                    }}
+                />
+
+                {/* <Stack.Screen
                     name="journal/[date]"
                     initialParams={{
                         name: "Create or Edit Journal"
@@ -51,7 +75,7 @@ export default function Layout() {
                         header: ({ route }) => <Header route={route} />,
                         headerShown: true
                     }}
-                />
+                /> */}
             </Stack>
         </SessionProvider>
     )

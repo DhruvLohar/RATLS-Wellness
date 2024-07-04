@@ -18,8 +18,8 @@ export default function PieChartView({ title, desc }) {
     useEffect(() => {
         async function fetchData() {
             const res = await fetchFromAPI('sessions/moodMapChartData/');
-            console.log(res)
-            // setData(data)
+            
+            setData(data)
         }
         fetchData()
     }, []);
