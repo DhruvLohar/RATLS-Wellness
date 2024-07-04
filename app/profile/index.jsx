@@ -32,11 +32,11 @@ export default function Profile() {
 
             <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'flex-start' }]}>
                 <Image
-                    source={{ uri: "https://avatarfiles.alphacoders.com/375/375167.png" }}
+                    source={{ uri: session?.avatar }}
                     style={styles.profile}
                 />
                 <View>
-                    <Text style={Typography.heading2}>John Doe</Text>
+                    <Text style={Typography.heading2}>{session?.name}</Text>
                     <Text style={[Typography.captionText, { marginTop: -6, fontSize: 14 }]}>Last Login: Yesterday</Text>
                 </View>
 
@@ -48,10 +48,10 @@ export default function Profile() {
             </View>
 
             <Text style={[Typography.heading3, { marginTop: 30 }]}>Personal Information</Text>
-            <Info title="Email" value={"johndoe@gmail.com"} />
-            <Info title="Gender" value={"Male"} />
-            <Info title="Age" value={"19 years"} />
-            <Info title="Meditation Experience" value={"14 Months"} />
+            <Info title="Email" value={session?.email} />
+            <Info title="Gender" value={session?.gender} />
+            <Info title="Age" value={`${session?.age} years`} />
+            <Info title="Meditation Experience" value={`${session?.meditationExperience} months`} />
 
             <Button
                 title={"Logout"}

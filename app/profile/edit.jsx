@@ -1,16 +1,19 @@
+import { useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Formik } from "formik";
-import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from "expo-router";
+import { GalleryEdit } from "iconsax-react-native";
 
 import { useSession } from '../../hooks/auth';
 import Button from "../../components/Button"
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
-import { useRouter } from "expo-router";
-import { GalleryEdit } from "iconsax-react-native";
 import Input from "../../components/Input";
-import { useState } from "react";
+import AvatarSelection from "../../components/AvatarSelection";
+import { toFormData } from "axios";
+import { axiosRequest } from "../../hooks/api";
+import { Avatars } from "../../services/constants";
 
 function Info({ title, children }) {
     return (
@@ -24,61 +27,48 @@ function Info({ title, children }) {
 export default function EditProfile() {
 
     const router = useRouter()
-    const { session } = useSession()
+    const { session, refreshUser } = useSession()
+
     const [image, setImage] = useState(null)
-
-    async function handleUploadImage() {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert('Permission to access camera roll is required!');
-            return;
-        }
-
-        const pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!pickerResult.canceled) {
-            setImage(pickerResult.assets[0].uri);
-        }
-    }
+    const [avatar, setAvatar] = useState(0)
 
     const [userData, setUserData] = useState({
-        name: "",
-        email: "",
-        gender: "",
-        age: "",
-        meditationExperience: "",
+        name: session?.name || "",
+        email: session?.email || "",
+        gender: session?.gender || "",
+        age: session?.age.toString() || "",
+        meditationExperience: session?.meditationExperience.toString() || "",
     })
 
-    function handleUpdateProfile(values) {
-        console.log(values)
+    async function handleUpdateProfile(values) {
+        if (!image && avatar === -1) {
+            alert('Please upload a proper image')
+        }
+
+        const formData = toFormData(values);
+        formData.append('avatar', avatar !== -1 ? Avatars[avatar] : image)
+
+        const res = await axiosRequest('users/', {
+            method: 'put',
+            data: formData
+        }, true);
+
+        if (res.success) {
+            refreshUser();
+            router.back();
+        } else {
+            alert("Something went wrong")
+        }
     }
 
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
 
-            <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'flex-start' }]}>
-                <Image
-                    source={{ 
-                        uri: image || "https://avatarfiles.alphacoders.com/375/375167.png"
-                    }}
-                    style={styles.profile}
-                />
-                <View>
-                    <Text style={Typography.heading2}>John Doe</Text>
-                    <Text style={[Typography.captionText, { marginTop: -6, fontSize: 14 }]}>
-                        Updating Profile
-                    </Text>
-                </View>
-                <GalleryEdit 
-                    color={Colors.dark} size={34} style={{marginLeft: 'auto'}}
-                    onPress={handleUploadImage}    
-                />
-            </View>
+            <Text style={[Typography.heading3, { marginTop: 30 }]}>Update Avatar</Text>
+            <AvatarSelection
+                image={image} setImage={setImage}
+                avatar={avatar} setAvatar={setAvatar}
+            />
 
             <Text style={[Typography.heading3, { marginTop: 30 }]}>Personal Information</Text>
             <Formik
@@ -127,9 +117,8 @@ export default function EditProfile() {
                             type={"fill"}
                         />
                         <Button
-                            title={"Go Back"}
-                            type={"outline"}
-                            style={{ marginTop: 20 }}
+                            title={"Go Back"} type={"outline"}
+                            style={{ marginVertical: 5 }}
                         />
                     </>
                 )}

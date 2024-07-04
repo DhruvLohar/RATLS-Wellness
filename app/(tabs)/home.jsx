@@ -51,7 +51,7 @@ export default function Home() {
             <View style={[Layout.flexRowCenter, { width: '100%' }]}>
                 <Link href={"/profile"}>
                     <View style={[Layout.flexRowCenter]}>
-                        <Image source={{ uri: "https://avatarfiles.alphacoders.com/375/375167.png" }} style={styles.profileImage} />
+                        <Image source={{ uri: session?.avatar }} style={styles.profileImage} />
                         <View>
                             <Text style={[Typography.heading2, { fontSize: 22 }]}>{session?.name || 'User'}</Text>
                             <Text style={[Typography.captionText, { fontSize: 12, marginTop: -6 }]}>Last time your opened was 1 day ago</Text>

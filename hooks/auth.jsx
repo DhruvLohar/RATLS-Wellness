@@ -41,8 +41,8 @@ export function SessionProvider(props) {
     }
 
     async function refreshUser() {
-        const { user } = await fetchFromAPI('user/');
-        console.log(user); 
+        const res = await fetchFromAPI('users/');
+        setStorageState(res);
     }
 
     useEffect(() => {

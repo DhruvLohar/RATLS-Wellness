@@ -1,8 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Formik } from 'formik';
-import * as ImagePicker from 'expo-image-picker';
 
 import Typography from "../../theme/typography";
 import Input from "../../components/Input";
@@ -11,8 +10,11 @@ import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import { useState } from "react";
 import { Avatars } from "../../services/constants";
-import { API_URL } from "../../hooks/api";
+import { axiosRequest } from "../../hooks/api";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toFormData } from "axios";
+import { useSession } from "../../hooks/auth";
+import AvatarSelection from "../../components/AvatarSelection";
 
 function Info({ title, children }) {
     return (
@@ -25,50 +27,33 @@ function Info({ title, children }) {
 
 export default function createProfile() {
 
+    const router = useRouter()
+    const { refreshUser } = useSession()
+
     const [image, setImage] = useState(null)
     const [avatar, setAvatar] = useState(0)
 
-    async function handleUploadImage() {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert('Permission to access camera roll is required!');
-            return;
+    async function handleCreateProfile(values) {
+
+        if (!image && avatar === -1) {
+            alert('Please upload a proper image')
         }
 
-        const pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 5],
-            quality: 1,
-        });
+        const formData = toFormData(values);
+        formData.append('avatar', avatar !== -1 ? Avatars[avatar] : image)
 
-        if (!pickerResult.cancelled) {
-            setAvatar(-1);
-            setImage(pickerResult.assets[0].uri);
+        const res = await axiosRequest('users/', {
+            method: 'put',
+            data: formData
+        }, true);
+
+        if (res.success) {
+            refreshUser();
+            router.replace('/');
+        } else {
+            alert("Something went wrong")
         }
     }
-
-    function removeUploadImage() {
-        setImage(null);
-    }
-
-    function handleCreateProfile(values) {
-
-        console.log('Form Data:', values);
-        console.log('Image URI:', image, avatar);
-        
-    }
-
-    const renderItem = ({ item, index }) => (
-        <Pressable
-            onPress={() => setAvatar(index)}
-        >
-            <Image
-                source={{ uri: `${API_URL}avatar/${item}` }}
-                style={[styles.avatar, index === avatar && styles.activeAvatar]}
-            />
-        </Pressable>
-    );
 
     return (
         <SafeAreaView style={[Layout.screenView, { alignItems: 'flex-start' }]}>
@@ -78,34 +63,10 @@ export default function createProfile() {
                 <Text style={[Typography.heading1]}>Create Profile</Text>
                 <Text style={[Typography.captionText]}>Please enter the information and choose yourself an avatar or upload your own!</Text>
 
-                <View style={{
-                    marginVertical: 20,
-                    height: 100,
-                }}>
-                    {image && (
-                        <Pressable
-                            onPress={() => setAvatar(-1)}
-                        >
-                            <Image
-                                source={{ uri: image }}
-                                style={[styles.avatar, avatar === -1 && styles.activeAvatar]}
-                            />
-                        </Pressable>
-                    )}
-                    <FlatList
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        data={Avatars}
-                        renderItem={renderItem}
-                        keyExtractor={(item, index) => index.toString()}
-                        contentContainerStyle={styles.contentContainer}
-                    />
-                </View>
-
-                <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'space-between' }]}>
-                    <Button title={"Upload Image"} style={{ width: "56%" }} onPress={handleUploadImage} />
-                    <Button title={"Remove"} type="outline" style={{ width: "42%" }} onPress={removeUploadImage} />
-                </View>
+               <AvatarSelection 
+                    image={image} setImage={setImage}
+                    avatar={avatar} setAvatar={setAvatar}
+               />
 
                 <Text style={[Typography.heading3, { marginVertical: 20 }]}>Tell us more about yourself</Text>
 
