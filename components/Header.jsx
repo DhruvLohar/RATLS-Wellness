@@ -2,18 +2,18 @@ import { StatusBar } from "expo-status-bar";
 import { memo } from "react";
 import { StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Colors from "../theme/colors";
 
-const Header = memo(({ route }) => {
+import Colors from "../theme/colors";
+import { TextButton } from "../components/Button";
+
+const Header = memo(({ route, style, textStyle, action=false, actionFnc }) => {
     return (
-        <SafeAreaView style={styles.headerContainer}>
+        <SafeAreaView style={[styles.headerContainer, style]}>
             <StatusBar style="dark" />
-            <Text style={styles.headerText}>{route?.params?.name || ""}</Text>
-            {/* <LinearGradient
-                colors={[Colors.light, 'transparent']}
-                style={styles.gradient}
-                locations={[0.2, 1]}
-            /> */}
+            <Text style={[styles.headerText, textStyle]}>{route?.params?.name || ""}</Text>
+            {action && (
+                <TextButton title={action} onPress={actionFnc} textStyle={{ color: Colors.light }} />
+            )}
         </SafeAreaView>
     )
 })

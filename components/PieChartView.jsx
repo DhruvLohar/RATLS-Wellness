@@ -17,26 +17,21 @@ export default function PieChartView({ title, desc }) {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await fetchFromAPI('sessions/moodMapChartData/');
+            const { data } = await fetchFromAPI('sessions/moodMapChartData/');
             
             setData(data)
         }
         fetchData()
     }, []);
 
-    // if (data.length === 0) {
-    //     <View>
-    //         <Text>Loading</Text>
-    //     </View>
-    // }
-
     return (
-        <View style={{ flex: 1, marginVertical: 15 }}>
-            <Text style={[Typography.heading3]}>{title}</Text>
+        <View style={{ width: '100%', marginVertical: 15, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={[Typography.heading3, {alignSelf: 'flex-start'}]}>{title}</Text>
             <Text style={[Typography.bodyText, {
                 marginBottom: 15,
                 fontSize: 15,
-                color: Colors.muted
+                color: Colors.muted,
+                alignSelf: 'flex-start'
             }]}>{desc}</Text>
 
             <PieChart

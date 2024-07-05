@@ -1,5 +1,6 @@
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import quoteBg from "../../assets/images/quoteBg.png"
 import { useSession } from '../../hooks/auth';
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
@@ -62,9 +63,20 @@ export default function Home() {
             </View>
 
             <View
-                style={[styles.quoteContainer, Layout.cardView]}
+                style={[styles.quoteContainer, Layout.cardView, { padding: 0, borderWidth: 0 }]}
             >
-                <Text>The future belongs to those who believe in the beauty of their dreams.</Text>
+                <Image 
+                    source={quoteBg}
+                    style={styles.quoteImg}
+                />
+                <Text
+                    style={[
+                        Typography.heading2,
+                        { fontSize: 20, textAlign: 'center', width: '90%' }
+                    ]}
+                >
+                    " The future belongs to those who believe in the beauty of their dreams. "
+                </Text>
             </View>
 
             <Text style={[Typography.heading3]}>How are you feeling today ?</Text>
@@ -115,13 +127,24 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 120,
-        marginRight: 10
+        marginRight: 10,
+        position: 'relative'
     },
 
     quoteContainer: {
         width: '100%',
-        height: 100,
-        marginVertical: 15,
+        height: 140,
+        marginVertical: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    quoteImg: { 
+        width: "100%", 
+        height: "100%", 
+        borderRadius: 20,
+        position: 'absolute',
+        top: 0,
+        left: 0 
     },
 
     moodContainer: {

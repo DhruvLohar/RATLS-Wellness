@@ -12,6 +12,9 @@ import {
 } from "@expo-google-fonts/poppins";
 import { SessionProvider } from "../hooks/auth";
 import Header from "../components/Header";
+import { StyleSheet } from "react-native";
+import Colors from "../theme/colors";
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,6 +48,7 @@ export default function Layout() {
                 <Stack.Screen
                     name="profile/create"
                 />
+
                 <Stack.Screen
                     name="profile/index"
                     initialParams={{
@@ -55,6 +59,7 @@ export default function Layout() {
                         headerShown: true
                     }}
                 />
+
                 <Stack.Screen
                     name="profile/edit"
                     initialParams={{
@@ -67,17 +72,30 @@ export default function Layout() {
                     }}
                 />
 
-                {/* <Stack.Screen
-                    name="journal/[date]"
+                <Stack.Screen
+                    name="journal/[id]"
                     initialParams={{
-                        name: "Create or Edit Journal"
+                        name: "Your Journal"
                     }}
-                    options={{
-                        header: ({ route }) => <Header route={route} />,
-                        headerShown: true
-                    }}
-                /> */}
+                    // options={{
+                    //     header: ({ route }) => <Header route={route} style={styles.customHeader} textStyle={styles.customHeaderText} action={"SHARE"} />,
+                    //     headerShown: true
+                    // }}
+                />
             </Stack>
         </SessionProvider>
     )
 }
+
+const styles = StyleSheet.create({
+    customHeader: {
+        backgroundColor: "#1b1b1b",
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        justifyContent: 'space-between',
+        paddingHorizontal: 20
+    },
+    customHeaderText: {
+        color: Colors.light
+    }
+})

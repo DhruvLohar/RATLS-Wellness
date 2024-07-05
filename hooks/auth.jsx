@@ -46,7 +46,9 @@ export function SessionProvider(props) {
     }
 
     useEffect(() => {
-        console.log("[👤] ", session)
+        if (session) {
+            console.log("[👤] ", Object.keys(session))
+        }
     }, [session])
 
     return (

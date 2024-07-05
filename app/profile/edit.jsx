@@ -52,6 +52,7 @@ export default function EditProfile() {
             method: 'put',
             data: formData
         }, true);
+        console.log(res)
 
         if (res.success) {
             refreshUser();
@@ -115,10 +116,6 @@ export default function EditProfile() {
                             title="Update"
                             onPress={handleSubmit}
                             type={"fill"}
-                        />
-                        <Button
-                            title={"Go Back"} type={"outline"}
-                            style={{ marginVertical: 5 }}
                         />
                     </>
                 )}

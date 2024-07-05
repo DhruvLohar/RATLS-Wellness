@@ -3,7 +3,7 @@ import { Image, TextalignCenter, TextalignLeft, TextalignRight, TextBold, TextIt
 import Colors from "./colors";
 import { Text } from "react-native";
 
-const ToolBarIcon = ({ Icon }) => <Icon color={Colors.dark} size={16} />
+const ToolBarIcon = ({ Icon }) => <Icon color={Colors.light} size={16} />
 
 export const CustomActions = [
     actions.setBold,
@@ -20,6 +20,7 @@ export const CustomActions = [
 
     actions.heading1,
     actions.heading2,
+    actions.heading3,
     actions.setParagraph,
 
     'divider',
@@ -44,9 +45,10 @@ export const CustomIconMap = {
 
     [actions.insertImage]: () => <ToolBarIcon Icon={Image} />,
 
-    'divider': () => <Text>•</Text>,
+    'divider': () => <Text style={{ color: Colors.light }}>•</Text>,
 
-    [actions.heading1]: () => <Text>H1</Text>,
-    [actions.heading2]: () => <Text>H2</Text>,
-    [actions.setParagraph]: () => <Text>P</Text>,
+    [actions.heading1]: () => <Text style={{ color: Colors.light }}>H1</Text>,
+    [actions.heading2]: () => <Text style={{ color: Colors.light }}>H2</Text>,
+    [actions.heading3]: () => <Text style={{ color: Colors.light }}>H3</Text>,
+    [actions.setParagraph]: () => <Text style={{ color: Colors.light }}>P</Text>,
 }

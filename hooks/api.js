@@ -17,10 +17,10 @@ export async function postToAPI(url, data) {
 }
 
 export async function fetchFromAPI(url) {
-  if (session) {
-    axios.defaults.headers.common.Authorization = `Bearer ${session?.accessToken}`
-  }
   try {
+    if (session?.accessToken) {
+      axios.defaults.headers.common.Authorization = `Bearer ${session?.accessToken}`
+    }
     const res = await axios.get(url);
 
     return res.data

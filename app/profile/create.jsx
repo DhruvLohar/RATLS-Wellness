@@ -63,10 +63,10 @@ export default function createProfile() {
                 <Text style={[Typography.heading1]}>Create Profile</Text>
                 <Text style={[Typography.captionText]}>Please enter the information and choose yourself an avatar or upload your own!</Text>
 
-               <AvatarSelection 
+                <AvatarSelection
                     image={image} setImage={setImage}
                     avatar={avatar} setAvatar={setAvatar}
-               />
+                />
 
                 <Text style={[Typography.heading3, { marginVertical: 20 }]}>Tell us more about yourself</Text>
 

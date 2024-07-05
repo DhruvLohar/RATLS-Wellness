@@ -30,10 +30,10 @@ export default function Button({ title, onPress, type, PrefixIcon, style, textSt
     )
 }
 
-export function TextButton({ title, onPress }) {
+export function TextButton({ title, onPress, textStyle }) {
     return (
         <Pressable onPress={onPress} style={styles.buttonText}>
-            <Text style={Typography.buttonText}>{title}</Text>
+            <Text style={[Typography.buttonText, textStyle]}>{title}</Text>
         </Pressable>
     );
 }

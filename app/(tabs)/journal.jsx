@@ -22,7 +22,6 @@ export default function CalendarListScreen() {
     const router = useRouter()
 
     const onDayPress = useCallback((day) => {
-        console.log(day)
         router.push(`/journal/${day.dateString}`)
     }, []);
 
@@ -54,17 +53,19 @@ export default function CalendarListScreen() {
     }
 
     return (
-        <CalendarList
-            current={formatDate()}
-            pastScrollRange={3}
-            futureScrollRange={0}
-            onDayPress={onDayPress}
-            displayLoadingIndicator
-            markedDates={marked}
-            renderHeader={renderCustomHeader}
-            calendarHeight={390}
-            theme={theme}
-        />
+        <>
+            <CalendarList
+                current={formatDate()}
+                pastScrollRange={2}
+                futureScrollRange={0}
+                onDayPress={onDayPress}
+                displayLoadingIndicator
+                markedDates={marked}
+                renderHeader={renderCustomHeader}
+                calendarHeight={390}
+                theme={theme}
+            />
+        </>
     );
 };
 
