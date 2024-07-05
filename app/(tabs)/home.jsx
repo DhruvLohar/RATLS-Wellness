@@ -65,7 +65,7 @@ export default function Home() {
             <View
                 style={[styles.quoteContainer, Layout.cardView, { padding: 0, borderWidth: 0 }]}
             >
-                <Image 
+                <Image
                     source={quoteBg}
                     style={styles.quoteImg}
                 />
@@ -101,20 +101,20 @@ export default function Home() {
                     <View style={styles.navCardRow} key={i}>
                         {group.map(card => (
                             <View style={[Layout.cardView, styles.navCard]} key={card.path}>
-                                <Text>{card.title}</Text>
+                                <Text style={[Typography.bodyText, { textAlign: 'center', width: '90%' }]}>{card.title}</Text>
                             </View>
                         ))}
                     </View>
                 ))}
             </View>
 
-            <LineChartView 
+            <LineChartView
                 title={"Time Spent in Last Week"}
                 desc={"Lorem ipsum doler sit amet."}
-                data={data} 
+                data={data}
             />
 
-            <PieChartView 
+            <PieChartView
                 title={"Your mood over the past month."}
                 desc={"This is your mood map, showing your mood distribution over the month."}
             />
@@ -138,13 +138,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    quoteImg: { 
-        width: "100%", 
-        height: "100%", 
+    quoteImg: {
+        width: "100%",
+        height: "100%",
         borderRadius: 20,
         position: 'absolute',
         top: 0,
-        left: 0 
+        left: 0
     },
 
     moodContainer: {
@@ -181,8 +181,10 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     navCard: {
-        width: "48%",
+        width: "49%",
         height: 100,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 0
     }
 })

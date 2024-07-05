@@ -28,6 +28,9 @@ export default function Tracker() {
 
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
+            <Text style={[Typography.heading1]}>Drink Water</Text>
+            <Text style={[Typography.captionText]}>Tap on the card below after your drank a glass of water to mark your progress.</Text>
+
             <Pressable
                 style={styles.waterContainer}
                 onPress={handleWaterClick}

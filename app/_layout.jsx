@@ -46,6 +46,18 @@ export default function Layout() {
                 }}
             >
                 <Stack.Screen
+                    name="challenge/[slug]"
+                    initialParams={{
+                        name: "Ready. Set. Go"
+                    }}
+                    options={{
+                        header: ({ route }) => <Header route={route} />,
+                        headerShown: true,
+                        animation: 'slide_from_bottom'
+                    }}
+                />
+
+                <Stack.Screen
                     name="profile/create"
                 />
 
@@ -77,10 +89,6 @@ export default function Layout() {
                     initialParams={{
                         name: "Your Journal"
                     }}
-                    // options={{
-                    //     header: ({ route }) => <Header route={route} style={styles.customHeader} textStyle={styles.customHeaderText} action={"SHARE"} />,
-                    //     headerShown: true
-                    // }}
                 />
             </Stack>
         </SessionProvider>

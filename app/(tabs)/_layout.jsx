@@ -1,12 +1,9 @@
 import { Tabs } from "expo-router";
-import { Heart, Home2, Image, MessageEdit, Timer1 } from "iconsax-react-native";
+import { Calendar, Heart, Home2, Note, Timer1 } from "iconsax-react-native";
 import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import Colors from "../../theme/colors";
-import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from "expo-linear-gradient";
 import Header from "../../components/Header";
 
 const TabIcon = memo(({ Icon, focused }) => {
@@ -50,13 +47,13 @@ export default function TabsLayout() {
                     "name": "Journal"
                 }}
                 options={{
-                    tabBarIcon: ({ focused }) => <TabIcon focused={focused} Icon={MessageEdit} />,
+                    tabBarIcon: ({ focused }) => <TabIcon focused={focused} Icon={Note} />,
                 }}
             />
             <Tabs.Screen
                 name="meditate"
                 initialParams={{
-                    "name": "Meditation Zone"
+                    "name": "Meditation & Yoga"
                 }}
                 options={{
                     tabBarIcon: ({ focused }) => <TabIcon focused={focused} Icon={Heart} />,
@@ -72,12 +69,12 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="yoga"
+                name="challenges"
                 initialParams={{
-                    "name": "Yoga"
+                    "name": "Challenges"
                 }}
                 options={{
-                    tabBarIcon: ({ focused }) => <TabIcon focused={focused} Icon={Image} />,
+                    tabBarIcon: ({ focused }) => <TabIcon focused={focused} Icon={Calendar} />,
                 }}
             />
         </Tabs>
