@@ -1,3 +1,5 @@
+import { API_URL } from "../hooks/api";
+
 export const Avatars = [
     'trAlex.png', 'trCathy.png', 'trChad.png', 'trChelsea.png',
     'trEnrique.png', 'trEric.png', 'trFelix.png', 'trFranklin.png',
@@ -21,6 +23,37 @@ export const Moods = [
     { "name": "Stressed", "emoji": "😫" },
     { "name": "Angry", "emoji": "😠" },
     { "name": "Guilty", "emoji": "😣" }
+]
+
+export const InbuiltSounds = [
+    {
+        id: 1,
+        title: "Soft Rain Forest",
+        duration: 6,
+        image: "https://i.pinimg.com/originals/ea/92/36/ea9236f9bb9aea792e7cf6707fc6fcd1.jpg",
+        audioUrl: `${API_URL}media/music/soft_rain.mp3`
+    },
+    {
+        id: 2,
+        title: "Thunderstrom",
+        duration: 12,
+        image: "https://cdn.pixabay.com/photo/2023/08/31/06/38/ai-generated-8224568_960_720.png",
+        audioUrl: `${API_URL}media/music/thunderstorms.mp3`
+    },
+    {
+        id: 3,
+        title: "Birds Singing",
+        duration: 3,
+        image: "https://images.unsplash.com/photo-1589620270305-2d2e11161699?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        audioUrl: `${API_URL}media/music/birds_singing.mp3`
+    },
+    {
+        id: 4,
+        title: "Sea Waves",
+        duration: 2,
+        image: "https://images.unsplash.com/photo-1527745592400-8c411e7717ce?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8b2NlYW4lMjB3YXZlc3xlbnwwfHwwfHx8MA%3D%3D",
+        audioUrl: `${API_URL}media/music/sea_waves.mp3`
+    }
 ]
 
 export function timesince(date) {

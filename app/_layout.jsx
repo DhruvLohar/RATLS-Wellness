@@ -58,6 +58,13 @@ export default function Layout() {
                 />
 
                 <Stack.Screen
+                    name="sound/[id]"
+                    options={{
+                        animation: "fade",
+                    }}
+                />
+
+                <Stack.Screen
                     name="profile/create"
                 />
 

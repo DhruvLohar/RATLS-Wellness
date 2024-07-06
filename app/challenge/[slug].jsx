@@ -39,7 +39,7 @@ export default function ChallengeScreen() {
         <View style={[Layout.screenView, { alignItems: 'flex-start' }]}>
             <Text style={[Typography.heading1]}>{challenge?.title}</Text>
             <Text style={[Typography.captionText, { marginBottom: 20 }]}>
-                {challenge.description}
+                {challenge?.description}
             </Text>
 
             <FlatList
@@ -54,7 +54,7 @@ export default function ChallengeScreen() {
                 modalVisible={modalVisible} 
                 setModalVisible={setModalVisible}
 
-                challengeSlug={challenge.slug}
+                challengeSlug={challenge?.slug}
                 selectedChallenge={selectedChallenge}
             />
         </View>
