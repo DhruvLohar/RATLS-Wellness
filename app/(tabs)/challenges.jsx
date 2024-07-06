@@ -2,12 +2,8 @@ import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from "expo-router";
 
-import { ChallengesJSON } from "../../services/challenges";
 import Layout from "../../theme/layout";
-import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
-import LineChartView from "../../components/LineChartView";
-import PieChartView from "../../components/PieChartView";
 
 export default function Challenges() {
 

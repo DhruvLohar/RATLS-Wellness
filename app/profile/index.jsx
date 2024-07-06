@@ -1,12 +1,13 @@
+import { useRouter } from "expo-router";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Edit2 } from "iconsax-react-native";
 
+import { timesince } from "../../services/constants"
 import { useSession } from '../../hooks/auth';
 import Button from "../../components/Button"
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
-import { useRouter } from "expo-router";
-import { Edit2 } from "iconsax-react-native";
 
 function Info({ title, value }) {
     return (
@@ -37,7 +38,7 @@ export default function Profile() {
                 />
                 <View>
                     <Text style={Typography.heading2}>{session?.name}</Text>
-                    <Text style={[Typography.captionText, { marginTop: -6, fontSize: 14 }]}>Last Login: Yesterday</Text>
+                    <Text style={[Typography.captionText, { marginTop: -6, fontSize: 14 }]}>Last Login: {timesince(session?.lastLogin)}</Text>
                 </View>
 
                 <Edit2

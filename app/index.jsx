@@ -2,6 +2,7 @@ import { Redirect, Stack } from 'expo-router';
 import { useSession } from '../hooks/auth';
 import { Text, View } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { initializeActivities, updateActivity } from '../hooks/activites';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -13,6 +14,7 @@ Notifications.setNotificationHandler({
 
 export default function AppLayout() {
     const { session, isLoading } = useSession();
+    initializeActivities();
 
     // You can keep the splash screen open, or render a loading screen like we do here.
     if (isLoading) {

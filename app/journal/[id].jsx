@@ -16,16 +16,15 @@ export default function JournalEditor() {
     const { id } = useLocalSearchParams()
     const router = useRouter()
 
-    const [disabled, setDisabled] = useState(true);
+    const [disabled, setDisabled] = useState(false);
     const [journal, setJournal] = useState(null);
 
     const richText = React.useRef();
     const navigation = useNavigation();
 
     const printToFile = async (html) => {
-        // On iOS/android prints the given html. On web prints the HTML from the current page.
         const { uri } = await Print.printToFileAsync({ html });
-        
+
         await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
     };
 
@@ -42,7 +41,7 @@ export default function JournalEditor() {
                 </body>
             </html>
             `;
-            
+
             await printToFile(html);
         }
     }
@@ -52,7 +51,7 @@ export default function JournalEditor() {
         
         setDisabled(!res.success)
         setJournal(res?.journal)
-        
+
     }
 
     async function uploadJournalImage(pickerResult) {
@@ -112,24 +111,28 @@ export default function JournalEditor() {
         fetchJournal()
 
         const backAction = async () => {
-            if (!disabled) {
-                const currentContent = await richText.current.getContentHtml();
-    
-                const res = await axiosRequest(`journals/${btoa(id)}/`, {
-                    method: 'put',
-                    data: {
-                        contentHTML: currentContent
-                    }
-                }, false);
-    
-                ToastAndroid.showWithGravity(
-                    res.message,
-                    ToastAndroid.SHORT,
-                    ToastAndroid.CENTER,
-                );
-            }
+            try {
+                if (!disabled) {
+                    const currentContent = await richText.current.getContentHtml();
 
-            router.back();
+                    const res = await axiosRequest(`journals/${btoa(id)}/`, {
+                        method: 'put',
+                        data: {
+                            contentHTML: currentContent
+                        }
+                    }, false);
+
+                    ToastAndroid.showWithGravity(
+                        res.message,
+                        ToastAndroid.SHORT,
+                        ToastAndroid.CENTER,
+                    );
+                }
+
+                router.back();
+            } catch (e) {
+                router.back();
+            }
         };
 
         const backHandler = BackHandler.addEventListener(
@@ -138,7 +141,7 @@ export default function JournalEditor() {
         );
 
         return () => backHandler.remove();
-    }, [])
+    }, [disabled, id])
 
     return (
         <SafeAreaView style={[styles.container]}>

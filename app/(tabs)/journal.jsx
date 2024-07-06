@@ -5,7 +5,7 @@ import Colors from '../../theme/colors';
 import { useRouter } from 'expo-router';
 import { fetchFromAPI } from '../../hooks/api';
 
-function formatDate(iso=null) {
+function formatDate(iso = null) {
     const date = iso ? new Date(iso) : new Date();
 
     const year = date.getFullYear();
@@ -30,11 +30,14 @@ export default function CalendarListScreen() {
             const { journals, pastMonthsRange } = await fetchFromAPI("journals/");
 
             const data = {};
+            const now = formatDate();
+
             journals?.map(journal => {
                 const date = formatDate(journal?.createdAt);
+
                 data[date] = {
                     selectedTextColor: Colors.light,
-                    selectedColor: Colors.readOnlyJournals,
+                    selectedColor: (date === now) ?  Colors.primary : Colors.readOnlyJournals,
                     selected: true,
                 }
             });
@@ -53,19 +56,17 @@ export default function CalendarListScreen() {
     }
 
     return (
-        <>
-            <CalendarList
-                current={formatDate()}
-                pastScrollRange={2}
-                futureScrollRange={0}
-                onDayPress={onDayPress}
-                displayLoadingIndicator
-                markedDates={marked}
-                renderHeader={renderCustomHeader}
-                calendarHeight={390}
-                theme={theme}
-            />
-        </>
+        <CalendarList
+            current={formatDate()}
+            pastScrollRange={2}
+            futureScrollRange={0}
+            onDayPress={onDayPress}
+            displayLoadingIndicator
+            markedDates={marked}
+            renderHeader={renderCustomHeader}
+            calendarHeight={390}
+            theme={theme}
+        />
     );
 };
 

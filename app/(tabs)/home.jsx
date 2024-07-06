@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 
 import quoteBg from "../../assets/images/quoteBg.png"
 import { useSession } from '../../hooks/auth';
@@ -7,31 +7,21 @@ import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
 import LineChartView from "../../components/LineChartView";
 import PieChartView from "../../components/PieChartView";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { axiosRequest } from "../../hooks/api";
+import { isFirstLoginOfDay, getActivities } from "../../hooks/activites";
+import { Moods, timesince } from "../../services/constants";
 
 export default function Home() {
-    const { session, isLoading } = useSession();
 
-    const moods = [
-        { "name": "Happy", "emoji": "😊" },
-        { "name": "Optimistic", "emoji": "😁" },
-        { "name": "Fine", "emoji": "🙂" },
-        { "name": "Neutral", "emoji": "😐" },
-        { "name": "Tired", "emoji": "😴" },
-        { "name": "Sad", "emoji": "😢" },
-        { "name": "Depressed", "emoji": "😞" },
-        { "name": "Inadequate", "emoji": "😔" },
-        { "name": "Lost", "emoji": "😕" },
-        { "name": "Unmotivated", "emoji": "😒" },
-        { "name": "Anxious", "emoji": "😟" },
-        { "name": "Stressed", "emoji": "😫" },
-        { "name": "Angry", "emoji": "😠" },
-        { "name": "Guilty", "emoji": "😣" }
-    ]
+    const router = useRouter()
+    const [lastAppOpen, setAppOpen] = useState("")
+    const { session, refreshUser } = useSession();
 
     const navCards = [
         [
-            { title: 'Check-in', path: '/check-in' },
+            { title: 'Challenges', path: '/(tabs)/challenges' },
             { title: 'Journal', path: '/(tabs)/journal' },
         ],
         [
@@ -47,15 +37,54 @@ export default function Home() {
         { value: 35 }, { value: 43 }
     ];
 
+    async function updateStreak(lastLogin) {
+        const res = await axiosRequest(`users/${session?._id}/updateStreaks/`, {
+            method: 'put',
+            data: { lastUserLogin: lastLogin }
+        }, false);
+
+        refreshUser()
+    }
+
+    async function handleMoodSelect(mood) {
+        const res = await axiosRequest(`users/${session?._id}/updateMoodMap/`, {
+            method: 'put',
+            data: { mood }
+        }, false);
+
+        if (!res.success) {
+            ToastAndroid.showWithGravity(
+                "You can update your mood only once.",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
+        }
+    }
+
+    useEffect(() => {
+        (async () => {
+            const firstLogin = await isFirstLoginOfDay();
+            const activites = await getActivities();
+            setAppOpen(activites?.lastAppOpen);
+
+            if (firstLogin) {
+                updateStreak();
+            }
+        })();
+    }, [])
+
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
+
             <View style={[Layout.flexRowCenter, { width: '100%' }]}>
                 <Link href={"/profile"}>
                     <View style={[Layout.flexRowCenter]}>
                         <Image source={{ uri: session?.avatar }} style={styles.profileImage} />
                         <View>
                             <Text style={[Typography.heading2, { fontSize: 22 }]}>{session?.name || 'User'}</Text>
-                            <Text style={[Typography.captionText, { fontSize: 12, marginTop: -6 }]}>Last time your opened was 1 day ago</Text>
+                            <Text style={[Typography.captionText, { fontSize: 12, marginTop: -6 }]}>
+                                Last app opened: {timesince(lastAppOpen)}
+                            </Text>
                         </View>
                     </View>
                 </Link>
@@ -88,11 +117,15 @@ export default function Home() {
                     { marginVertical: 10 }
                 ]}
             >
-                {moods.map((mood, i) => (
-                    <View style={{ alignItems: 'center', marginRight: 15 }} key={i}>
+                {Moods.map((mood, i) => (
+                    <Pressable
+                        key={i}
+                        style={{ alignItems: 'center', marginRight: 15 }}
+                        onPress={() => handleMoodSelect(mood.name)}
+                    >
                         <Text style={{ fontSize: 46, marginBottom: 5 }}>{mood.emoji}</Text>
                         <Text style={[Typography.bodyText, { color: Colors.muted, fontSize: 12 }]}>{mood.name}</Text>
-                    </View>
+                    </Pressable>
                 ))}
             </ScrollView>
 
@@ -100,9 +133,13 @@ export default function Home() {
                 {navCards.map((group, i) => (
                     <View style={styles.navCardRow} key={i}>
                         {group.map(card => (
-                            <View style={[Layout.cardView, styles.navCard]} key={card.path}>
+                            <Pressable 
+                                key={card.path}
+                                style={[Layout.cardView, styles.navCard]} 
+                                onPress={() => router.push(card.path)}
+                            >
                                 <Text style={[Typography.bodyText, { textAlign: 'center', width: '90%' }]}>{card.title}</Text>
-                            </View>
+                            </Pressable>
                         ))}
                     </View>
                 ))}

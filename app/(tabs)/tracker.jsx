@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, Image, Pressable, ToastAndroid } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { LineChart } from "react-native-gifted-charts";
 
@@ -11,20 +11,57 @@ import Typography from '../../theme/typography';
 import { useRouter } from 'expo-router';
 
 import { schedulePushNotification } from '../../services/notification';
+import { getActivities, updateActivity } from '../../hooks/activites';
 
 export default function Tracker() {
 
     const router = useRouter()
+    const [waterIntake, setWaterIntake] = useState(0);
 
     async function handleWaterClick() {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: 'Hi Dhruv, its water time!',
-                body: 'Open your app and click on the water card to mark that you drank your water.',
-            },
-            trigger: { seconds: 1 },
-        });
+        // await Notifications.scheduleNotificationAsync({
+        //     content: {
+        //         title: 'Hi Dhruv, its water time!',
+        //         body: 'Open your app and click on the water card to mark that you drank your water.',
+        //     },
+        //     trigger: { seconds: 1 },
+        // });
+        const now = new Date();
+        const activites = await getActivities();
+        
+        const oneHourInMilliseconds = 3600 * 1000;
+        const newWaterIntake = (activites?.waterIntake || 0) + 300;
+
+        const lastWaterIntake = new Date(activites?.lastWaterIntake);
+        const isOneHourGap = now - lastWaterIntake >= oneHourInMilliseconds;
+
+        if (!activites?.lastWaterIntake || isOneHourGap) {
+            if (newWaterIntake >= 3000) {
+                ToastAndroid.showWithGravity(
+                    "Goal achieved: You've reached your water intake goal!",
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER,
+                );
+            } else {
+                await updateActivity('lastWaterIntake', now.toISOString());
+                await updateActivity('waterIntake', newWaterIntake);
+                setWaterIntake(newWaterIntake);
+            }
+        } else {
+            ToastAndroid.showWithGravity(
+                "You need to wait at least 1 hour before recording another water intake.",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
+        }
     }
+
+    useEffect(() => {
+        (async () => {
+            const activites = await getActivities();
+            setWaterIntake(activites.waterIntake);
+        })();
+    }, [])
 
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
@@ -36,7 +73,7 @@ export default function Tracker() {
                 onPress={handleWaterClick}
             >
                 <CircularProgress
-                    progress={60}
+                    progress={Math.round((waterIntake / 3000) * 100)}
                     outerCircleColor={Colors.inputBG}
                     progressCircleColor={Colors.primary}
                     labelStyle={{
@@ -46,7 +83,7 @@ export default function Tracker() {
                     strokeWidth={5}
                 />
                 <Text style={[Typography.captionText, { marginTop: 10 }]}>Completed</Text>
-                <Text style={Typography.heading3}>1200 / 2100 ml</Text>
+                <Text style={Typography.heading3}>{waterIntake} / 3000 ml</Text>
                 <Image source={waterBoy} style={styles.waterImage} />
             </Pressable>
 
@@ -57,9 +94,9 @@ export default function Tracker() {
 
                     <Pressable style={[
                         styles.cardBtn,
-                        {backgroundColor: Colors.light}
+                        { backgroundColor: Colors.light }
                     ]}>
-                        <Text style={{fontWeight: 'bold', color: Colors.dark}}>Explore</Text>
+                        <Text style={{ fontWeight: 'bold', color: Colors.dark }}>Explore</Text>
                     </Pressable>
                 </View>
                 <View style={[styles.box, { backgroundColor: '#FDCE83' }]}>
@@ -68,9 +105,9 @@ export default function Tracker() {
 
                     <Pressable style={[
                         styles.cardBtn,
-                        {backgroundColor: Colors.dark}
+                        { backgroundColor: Colors.dark }
                     ]}>
-                        <Text style={{fontWeight: 'bold', color: Colors.light}}>Explore</Text>
+                        <Text style={{ fontWeight: 'bold', color: Colors.light }}>Explore</Text>
                     </Pressable>
                 </View>
             </View>
@@ -131,8 +168,8 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     waterImage: {
-        width: 250,
-        height: 250,
+        width: 220,
+        height: 220,
         objectFit: 'fill',
 
         position: 'absolute',
