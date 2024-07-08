@@ -14,7 +14,7 @@
       "expo-router",
       "expo-secure-store"
     ],
-    "name": "ratls_wellness",
+    "name": "RATLS Wellness",
     "slug": "ratls_wellness",
     "extra": {
       "router": {
