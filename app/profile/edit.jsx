@@ -52,7 +52,6 @@ export default function EditProfile() {
             method: 'put',
             data: formData
         }, true);
-        console.log(res)
 
         if (res.success) {
             refreshUser();

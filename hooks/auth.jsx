@@ -46,7 +46,7 @@ export function SessionProvider(props) {
     }
 
     function signOut() {
-        setStorageState(null)
+        setStorageState({})
     }
 
     async function refreshUser() {

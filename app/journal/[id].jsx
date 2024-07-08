@@ -49,9 +49,14 @@ export default function JournalEditor() {
     async function fetchJournal() {
         const res = await fetchFromAPI(`journals/${btoa(id)}/`);
         
-        setDisabled(!res.success)
-        setJournal(res?.journal)
-
+        if (res.success) {
+            setDisabled(!res.success)
+            setJournal(res?.journal)
+            
+            richText.current?.setContentHTML(res?.journal?.contentHTML)
+        } else {
+            alert("Cannot load the journal at the moment")
+        }
     }
 
     async function uploadJournalImage(pickerResult) {
@@ -63,16 +68,20 @@ export default function JournalEditor() {
             type: `${pickerResult?.assets[0]?.type}/${ext}`,
             name: `journal-image-${id}.${ext}`,
         };
-        console.log(image)
+        
         const data = new FormData();
         data.append('image', image);
 
-        const res = await axiosRequest(`journals/${journal?._id}/insertImage`, {
-            method: 'post',
-            data: data
-        }, true);
+        if (!journal) { fetchJournal() }
 
-        return res?.image;
+        if (journal) {
+            const res = await axiosRequest(`journals/${journal?._id}/insertImage`, {
+                method: 'post',
+                data: data
+            }, true);
+    
+            return res?.image;
+        } else { alert('Please try again later') }
     }
 
     useLayoutEffect(() => {
@@ -157,7 +166,6 @@ export default function JournalEditor() {
                         placeholder={disabled ? "You cannot edit this Journal." : "Start writing here ..."}
                         style={styles.richEditor}
                         disabled={disabled}
-                        initialContentHTML={journal?.contentHTML || null}
                     />
                 </ScrollView>
             </KeyboardAvoidingView>

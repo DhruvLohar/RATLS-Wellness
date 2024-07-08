@@ -66,13 +66,17 @@ export default function MusicScreen() {
         if (playbackInstance) {
             await playbackInstance.unloadAsync();
         }
-        const { sound: newPlaybackInstance } = await Audio.Sound.createAsync(
-            { uri: sound.audioUrl },
-            { shouldPlay: true },
-            onPlaybackStatusUpdate
-        );
-        setPlaybackInstance(newPlaybackInstance);
-        setIsPlaying(true);
+        
+        try {
+            const { sound: newPlaybackInstance } = await Audio.Sound.createAsync(
+                { uri: sound.audioUrl },
+                { shouldPlay: true },
+                onPlaybackStatusUpdate
+            );
+            
+            setPlaybackInstance(newPlaybackInstance);
+            setIsPlaying(true);
+        } catch (err) { alert("Cannot play this sound at the moment") }
     };
 
     const onPlaybackStatusUpdate = (status) => {
