@@ -17,26 +17,32 @@ Notifications.setNotificationHandler({
 export default function AppLayout() {
     const { session, isLoading } = useSession();
     const [continueToApp, setContinue] = useState(false);
-    
-    initializeActivities();
 
-    // You can keep the splash screen open, or render a loading screen like we do here.
+    // Initialize activities or perform any other setup as needed
+    useEffect(() => {
+        initializeActivities();
+    }, []);
+
+    // Render loading screen until session is loaded or continue flag is set
     if (isLoading || !continueToApp) {
-        return <AnimatedSplashScreen setAppReady={setContinue} />;
+        return <AnimatedSplashScreen setAppReady={setContinue} />
     }
 
-    // Only require authentication within the (app) group's layout as users
-    // need to be able to access the (auth) group and sign in again.
-    if (!Object.keys(session).length > 0 && !session?._id && !session?.accessToken) {
-        // On web, static rendering will stop here as the user is not authenticated
-        // in the headless Node process that the pages are rendered in.
-        return <Redirect href="/auth/login" />;
+    // If session is not available, redirect to login
+    if (!session) {
+        return <Redirect href="/auth/login" />
     }
 
-    if (Object.keys(session).length > 0 && !session.isProfileCreated) {
-        return <Redirect href={'/profile/create'} />    
+    // If session lacks required properties, redirect to login
+    if (!session?._id || !session?.accessToken) {
+        return <Redirect href="/auth/login" />
     }
 
-    return <Redirect href={'/(tabs)/home'} />
-    // return <Redirect href={'/profile/create'} />    
+    // If session is valid but profile is not created, redirect to profile creation
+    if (session.isProfileCreated !== true) {
+        return <Redirect href="/profile/create" />
+    }
+
+    // If session is valid and profile is created, redirect to home
+    return <Redirect href="/tabs/home" />
 }
