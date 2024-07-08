@@ -104,7 +104,9 @@ export default function Tracker() {
                         <Pressable style={[
                             styles.cardBtn,
                             { backgroundColor: Colors.light }
-                        ]}>
+                        ]}
+                            onPress={() => router.push('/(tabs)/meditate')}
+                        >
                             <Text style={{ fontWeight: 'bold', color: Colors.dark }}>Explore</Text>
                         </Pressable>
                     </View>

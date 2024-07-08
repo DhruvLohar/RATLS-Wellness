@@ -12,9 +12,6 @@ export default function AvatarSelection({
     avatar, setAvatar
 }) {
 
-    // const [image, setImage] = useState(null)
-    // const [avatar, setAvatar] = useState(0)
-
     async function handleUploadImage() {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {

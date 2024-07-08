@@ -10,8 +10,22 @@
       "resizeMode": "cover",
       "backgroundColor": "#1b1b1b"
     },
-    "plugins": ["expo-router", "expo-secure-store"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
     "name": "ratls_wellness",
-    "slug": "ratls_wellness"
+    "slug": "ratls_wellness",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "59045887-deb5-4630-9c10-e57ac0940b21"
+      }
+    },
+    "android": {
+      "package": "com.dhruvlohar.ratls_wellness"
+    }
   }
 }

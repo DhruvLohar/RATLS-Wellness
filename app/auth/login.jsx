@@ -37,7 +37,7 @@ export default function Login() {
             <Text style={[Typography.captionText]}>Lorem ipsum doler sit amet.</Text>
 
             <Formik
-                initialValues={{ email: 'dhruvlohar09@gmail.com', password: 'test' }}
+                initialValues={{ email: '', password: '' }}
                 onSubmit={handleLogin}
             >
                 {({ handleChange, handleSubmit, values }) => (

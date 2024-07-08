@@ -39,13 +39,17 @@ export default function createProfile() {
             alert('Please upload a proper image')
         }
 
-        const formData = toFormData(values);
+        // const formData = toFormData(values);
+        const formData = new FormData();
+        Object.keys(values).map(k => {
+            formData.append(k, values[k])
+        })
         formData.append('avatar', avatar !== -1 ? Avatars[avatar] : image)
 
         const res = await axiosRequest('users/', {
             method: 'put',
             data: formData
-        }, true);
+        }, image && avatar === -1);
 
         if (res.success) {
             refreshUser();

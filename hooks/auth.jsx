@@ -30,8 +30,6 @@ export function SessionProvider(props) {
 
         if (data.success) {
             setStorageState(data.user);
-        } else {
-            alert("Something went wrong")
         }
 
         return data.success;
@@ -42,11 +40,9 @@ export function SessionProvider(props) {
 
         if (data?.success) {
             setStorageState(data.user);
-        } else {
-            alert("Something went wrong")
         }
 
-        return data.success;
+        return data;
     }
 
     function signOut() {

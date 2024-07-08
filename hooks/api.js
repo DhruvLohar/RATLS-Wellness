@@ -2,6 +2,7 @@ import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 
 export const API_URL = "http://192.168.1.5:3000/";
+// export const API_URL = "https://app.reachandteach.in/"
 const session = JSON.parse(SecureStore.getItem("session") || "{}");
 
 axios.defaults.baseURL = API_URL;
@@ -31,10 +32,6 @@ export async function fetchFromAPI(url) {
 
 export async function axiosRequest(url, req_params, sendingMedia) {
 
-  if (!session?.accessToken) {
-    alert("Invalid Reques")
-  }
-
   try {
     const res = await axios.request({
       url: API_URL + url,
@@ -50,6 +47,6 @@ export async function axiosRequest(url, req_params, sendingMedia) {
     
     return res.data;
   } catch (err) {
-    console.log(err.message)
+    console.log(err)
   }
 };

@@ -30,8 +30,9 @@ export default function ChallengeScreen() {
 
     function toggleModal(challengeId) {
         if (
-            completedChallenges.length === 0 && challengeId !== 0 ||
-            completedChallenges.length > 0 && Math.max(...completedChallenges) !== challengeId - 1
+            (completedChallenges.length === 0 && challengeId !== 0 ||
+            completedChallenges.length > 0 && Math.max(...completedChallenges) !== challengeId - 1) &&
+            !completedChallenges.includes(challengeId)
         ) {
             ToastAndroid.showWithGravity(
                 "Complete the previous challenge first to unlock this challenge.",

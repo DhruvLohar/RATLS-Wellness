@@ -63,11 +63,11 @@ export default function JournalEditor() {
             type: `${pickerResult?.assets[0]?.type}/${ext}`,
             name: `journal-image-${id}.${ext}`,
         };
-
+        console.log(image)
         const data = new FormData();
         data.append('image', image);
 
-        const res = await axiosRequest(`journals/${journal?._id}/insertImage/`, {
+        const res = await axiosRequest(`journals/${journal?._id}/insertImage`, {
             method: 'post',
             data: data
         }, true);

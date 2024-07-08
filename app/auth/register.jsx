@@ -16,12 +16,12 @@ export default function Register() {
     const router = useRouter();
     const { signUp } = useSession();
 
-    async function handleSignup() {
+    async function handleSignup(values) {
         const result = await signUp(values);
-        if (result) {
+        if (result.success) {
             router.replace('/');
         } else {
-            alert("Someething went wrong");
+            alert(result?.message || "Something went wrong");
         }
     }
 
