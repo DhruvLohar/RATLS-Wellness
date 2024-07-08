@@ -1,6 +1,6 @@
 export const ChallengesJSON = [
     {
-        "slug": "morning-routine",
+        "slug": "morning_routine",
         "title": "Morning Routine",
         "description": "Establishing a healthy morning routine can set a positive tone for the rest of your day.",
         "challenges": [
@@ -56,7 +56,7 @@ export const ChallengesJSON = [
         ]
     },
     {
-        "slug": "social-anxiety",
+        "slug": "social_anxiety",
         "title": "Social Anxiety",
         "description": "Overcome social anxiety by gradually facing challenges that push you out of your comfort zone.",
         "challenges": [
@@ -112,7 +112,7 @@ export const ChallengesJSON = [
         ]
     },
     {
-        "slug": "self-care",
+        "slug": "self_care",
         "title": "Self care",
         "description": "Prioritize self-care practices that nurture your physical, emotional, and mental well-being.",
         "challenges": [
@@ -140,7 +140,7 @@ export const ChallengesJSON = [
         ]
     },
     {
-        "slug": "fix-your-sleep-schedule",
+        "slug": "sleep_schedule",
         "title": "Fix your sleep schedule",
         "description": "Develop healthy sleep habits and create a consistent bedtime routine for better quality sleep.",
         "challenges": [

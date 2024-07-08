@@ -5,6 +5,7 @@ import { fetchFromAPI, postToAPI } from './api';
 const AuthContext = React.createContext({
     signIn: () => null,
     signOut: () => null,
+    signUp: () => null,
     refreshUser: () => null,
     session: null,
     isLoading: false,
@@ -27,6 +28,18 @@ export function SessionProvider(props) {
     async function signIn(values) {
         const data = await postToAPI("users/login/", values);
 
+        if (data.success) {
+            setStorageState(data.user);
+        } else {
+            alert("Something went wrong")
+        }
+
+        return data.success;
+    }
+
+    async function signUp(values) {
+        const data = await postToAPI("users/", values);
+
         if (data?.success) {
             setStorageState(data.user);
         } else {
@@ -42,7 +55,7 @@ export function SessionProvider(props) {
 
     async function refreshUser() {
         const res = await fetchFromAPI('users/');
-        setStorageState(res);
+        setStorageState(res.user);
     }
 
     useEffect(() => {
@@ -56,6 +69,7 @@ export function SessionProvider(props) {
             value={{
                 signIn: signIn,
                 signOut: signOut,
+                signUp: signUp,
                 refreshUser: refreshUser,
                 session,
                 isLoading,

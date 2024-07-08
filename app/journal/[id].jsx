@@ -109,24 +109,25 @@ export default function JournalEditor() {
 
     useEffect(() => {
         fetchJournal()
-
+        
         const backAction = async () => {
             try {
                 if (!disabled) {
-                    const currentContent = await richText.current.getContentHtml();
-
-                    const res = await axiosRequest(`journals/${btoa(id)}/`, {
-                        method: 'put',
-                        data: {
-                            contentHTML: currentContent
-                        }
-                    }, false);
-
-                    ToastAndroid.showWithGravity(
-                        res.message,
-                        ToastAndroid.SHORT,
-                        ToastAndroid.CENTER,
-                    );
+                    const currentContent = await richText?.current?.getContentHtml();
+                    if (currentContent && currentContent !== "") {
+                        const res = await axiosRequest(`journals/${btoa(id)}/`, {
+                            method: 'put',
+                            data: {
+                                contentHTML: currentContent
+                            }
+                        }, false);
+    
+                        ToastAndroid.showWithGravity(
+                            res.message,
+                            ToastAndroid.SHORT,
+                            ToastAndroid.CENTER,
+                        );
+                    }
                 }
 
                 router.back();
@@ -153,7 +154,7 @@ export default function JournalEditor() {
                 <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
                     <RichEditor
                         ref={richText}
-                        placeholder={"Start writing here ..."}
+                        placeholder={disabled ? "You cannot edit this Journal." : "Start writing here ..."}
                         style={styles.richEditor}
                         disabled={disabled}
                         initialContentHTML={journal?.contentHTML || null}

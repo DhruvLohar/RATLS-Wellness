@@ -8,13 +8,14 @@ import Typography from "../../theme/typography";
 export default function Challenges() {
 
     const router = useRouter()
+
     const navCards = [
-        [{ "title": "Morning Routine", "slug": "morning-routine" },
+        [{ "title": "Morning Routine", "slug": "morning_routine" },
         { "title": "Happiness", "slug": "happiness" }],
-        [{ "title": "Social Anxiety", "slug": "social-anxiety" },
+        [{ "title": "Social Anxiety", "slug": "social_anxiety" },
         { "title": "Declutter", "slug": "declutter" }],
-        [{ "title": "Self care", "slug": "self-care" },
-        { "title": "Fix your sleep schedule", "slug": "fix-your-sleep-schedule" }]
+        [{ "title": "Self care", "slug": "self_care" },
+        { "title": "Fix your sleep schedule", "slug": "sleep_schedule" }]
     ]
 
 

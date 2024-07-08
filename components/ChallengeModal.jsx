@@ -9,12 +9,12 @@ import { ChallengesJSON } from '../services/challenges';
 
 export default function ChallengeModal({
     modalVisible, setModalVisible,
-    selectedChallenge, challengeSlug
+    selectedChallenge, challengeSlug,
+    completedChallenges=[], onComplete,
 }) {
 
     const challenge = ChallengesJSON.find(item => item.slug === challengeSlug);
     const title = challenge.challenges[selectedChallenge];
-
 
     return (
         <View style={styles.centeredView}>
@@ -40,7 +40,11 @@ export default function ChallengeModal({
                         >
                             {title}
                         </Text>
-                        <Button title={"Challenge Completed"} />
+                        <Button 
+                            title={"Challenge Completed"} 
+                            onPress={() => onComplete(selectedChallenge)}
+                            disabled={completedChallenges.includes(selectedChallenge)}
+                        />
                     </View>
                 </View>
             </Modal>

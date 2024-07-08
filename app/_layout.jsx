@@ -15,10 +15,10 @@ import Header from "../components/Header";
 import { StyleSheet } from "react-native";
 import Colors from "../theme/colors";
 
-
 SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
+
     const [fontsLoaded, fontError] = useFonts({
         Poppins_300Light,
         Poppins_400Regular,
@@ -45,6 +45,10 @@ export default function Layout() {
                     headerShown: false
                 }}
             >
+                <Stack.Screen
+                    name="+not-found"
+                />
+
                 <Stack.Screen
                     name="challenge/[slug]"
                     initialParams={{

@@ -5,19 +5,27 @@ import { useSession } from '../../hooks/auth';
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
+
 import LineChartView from "../../components/LineChartView";
 import PieChartView from "../../components/PieChartView";
 import { Link, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { axiosRequest } from "../../hooks/api";
 import { isFirstLoginOfDay, getActivities } from "../../hooks/activites";
 import { Moods, timesince } from "../../services/constants";
+import LottieView from "lottie-react-native";
 
 export default function Home() {
 
     const router = useRouter()
     const [lastAppOpen, setAppOpen] = useState("")
     const { session, refreshUser } = useSession();
+
+    const confettiRef = useRef(null);
+
+    function triggerConfetti() {
+        confettiRef.current?.play(0);
+    }
 
     const navCards = [
         [
@@ -42,8 +50,9 @@ export default function Home() {
             method: 'put',
             data: { lastUserLogin: lastLogin }
         }, false);
-
-        refreshUser()
+        if (res.success) {
+            refreshUser()
+        }
     }
 
     async function handleMoodSelect(mood) {
@@ -58,104 +67,128 @@ export default function Home() {
                 ToastAndroid.SHORT,
                 ToastAndroid.CENTER,
             );
+        } else {
+            ToastAndroid.showWithGravity(
+                "Your mood was added for the day!",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
+            triggerConfetti();
         }
     }
 
     useEffect(() => {
+        updateStreak();
+
         (async () => {
             const firstLogin = await isFirstLoginOfDay();
             const activites = await getActivities();
             setAppOpen(activites?.lastAppOpen);
 
             if (firstLogin) {
-                updateStreak();
+                console.log(firstLogin)
             }
         })();
     }, [])
 
     return (
-        <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
+        <>
+            <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
 
-            <View style={[Layout.flexRowCenter, { width: '100%' }]}>
-                <Link href={"/profile"}>
-                    <View style={[Layout.flexRowCenter]}>
-                        <Image source={{ uri: session?.avatar }} style={styles.profileImage} />
-                        <View>
-                            <Text style={[Typography.heading2, { fontSize: 22 }]}>{session?.name || 'User'}</Text>
-                            <Text style={[Typography.captionText, { fontSize: 12, marginTop: -6 }]}>
-                                Last app opened: {timesince(lastAppOpen)}
-                            </Text>
+                <View style={[Layout.flexRowCenter, { width: '100%' }]}>
+                    <Link href={"/profile"}>
+                        <View style={[Layout.flexRowCenter]}>
+                            <Image source={{ uri: session?.avatar }} style={styles.profileImage} />
+                            <View>
+                                <Text style={[Typography.heading2, { fontSize: 22 }]}>{session?.name || 'User'}</Text>
+                                <Text style={[Typography.captionText, { fontSize: 12, marginTop: -6 }]}>
+                                    Last app opened: {timesince(lastAppOpen)}
+                                </Text>
+                            </View>
                         </View>
-                    </View>
-                </Link>
-                <Text style={Typography.heading3}>🔥 {session?.currentStreak}</Text>
-            </View>
+                    </Link>
+                    <Text style={Typography.heading3}>🔥 {session?.currentStreak}</Text>
+                </View>
 
-            <View
-                style={[styles.quoteContainer, Layout.cardView, { padding: 0, borderWidth: 0 }]}
-            >
-                <Image
-                    source={quoteBg}
-                    style={styles.quoteImg}
-                />
-                <Text
-                    style={[
-                        Typography.heading2,
-                        { fontSize: 20, textAlign: 'center', width: '90%' }
+                <View
+                    style={[styles.quoteContainer, Layout.cardView, { padding: 0, borderWidth: 0 }]}
+                >
+                    <Image
+                        source={quoteBg}
+                        style={styles.quoteImg}
+                    />
+                    <Text
+                        style={[
+                            Typography.heading2,
+                            { fontSize: 20, textAlign: 'center', width: '90%' }
+                        ]}
+                    >
+                        " The future belongs to those who believe in the beauty of their dreams. "
+                    </Text>
+                </View>
+
+                <Text style={[Typography.heading3]}>How are you feeling today ?</Text>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={[
+                        Layout.flexRowCenter,
+                        { marginVertical: 10 }
                     ]}
                 >
-                    " The future belongs to those who believe in the beauty of their dreams. "
-                </Text>
-            </View>
+                    {Moods.map((mood, i) => (
+                        <Pressable
+                            key={i}
+                            style={{ alignItems: 'center', marginRight: 15 }}
+                            onPress={() => handleMoodSelect(mood.name)}
+                        >
+                            <Text style={{ fontSize: 46, marginBottom: 5 }}>{mood.emoji}</Text>
+                            <Text style={[Typography.bodyText, { color: Colors.muted, fontSize: 12 }]}>{mood.name}</Text>
+                        </Pressable>
+                    ))}
+                </ScrollView>
 
-            <Text style={[Typography.heading3]}>How are you feeling today ?</Text>
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={[
-                    Layout.flexRowCenter,
-                    { marginVertical: 10 }
-                ]}
-            >
-                {Moods.map((mood, i) => (
-                    <Pressable
-                        key={i}
-                        style={{ alignItems: 'center', marginRight: 15 }}
-                        onPress={() => handleMoodSelect(mood.name)}
-                    >
-                        <Text style={{ fontSize: 46, marginBottom: 5 }}>{mood.emoji}</Text>
-                        <Text style={[Typography.bodyText, { color: Colors.muted, fontSize: 12 }]}>{mood.name}</Text>
-                    </Pressable>
-                ))}
+                <View style={styles.navCardBase}>
+                    {navCards.map((group, i) => (
+                        <View style={styles.navCardRow} key={i}>
+                            {group.map(card => (
+                                <Pressable
+                                    key={card.path}
+                                    style={[Layout.cardView, styles.navCard]}
+                                    onPress={() => router.push(card.path)}
+                                >
+                                    <Text style={[Typography.bodyText, { textAlign: 'center', width: '90%' }]}>{card.title}</Text>
+                                </Pressable>
+                            ))}
+                        </View>
+                    ))}
+                </View>
+
+                <LineChartView
+                    title={"Time Spent in Last Week"}
+                    desc={"Lorem ipsum doler sit amet."}
+                    data={data}
+                />
+
+                <PieChartView
+                    title={"Your mood over the past month."}
+                    desc={"This is your mood map, showing your mood distribution over the month."}
+                />
+
             </ScrollView>
-
-            <View style={styles.navCardBase}>
-                {navCards.map((group, i) => (
-                    <View style={styles.navCardRow} key={i}>
-                        {group.map(card => (
-                            <Pressable 
-                                key={card.path}
-                                style={[Layout.cardView, styles.navCard]} 
-                                onPress={() => router.push(card.path)}
-                            >
-                                <Text style={[Typography.bodyText, { textAlign: 'center', width: '90%' }]}>{card.title}</Text>
-                            </Pressable>
-                        ))}
-                    </View>
-                ))}
+            <View style={Layout.lottie} pointerEvents="none">
+                <LottieView
+                    ref={confettiRef}
+                    source={require('../../assets/lottie/confetti.json')}
+                    autoPlay={false}
+                    loop={false}
+                    style={[{width: '100%', height: '100%'}]}
+                    resizeMode='cover'
+                    pointerEvents="none"
+                />
             </View>
+        </>
 
-            <LineChartView
-                title={"Time Spent in Last Week"}
-                desc={"Lorem ipsum doler sit amet."}
-                data={data}
-            />
-
-            <PieChartView
-                title={"Your mood over the past month."}
-                desc={"This is your mood map, showing your mood distribution over the month."}
-            />
-        </ScrollView>
     )
 }
 
@@ -223,5 +256,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 0
-    }
+    },
 })

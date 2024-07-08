@@ -34,32 +34,35 @@ export default function PieChartView({ title, desc }) {
                 alignSelf: 'flex-start'
             }]}>{desc}</Text>
 
-            <PieChart
-                donut
-                sectionAutoFocus
-                innerRadius={100}
-                radius={170}
-                innerCircleColor={'#232B5D'}
-                centerLabelComponent={() => {
-                    return (
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            {!emotion ? (
-                                <Text style={{ fontSize: 14, color: 'white' }}>Press on any tile</Text>
-                            ) : (
-                                <>
-                                    <Text
-                                        style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
-                                        {emotion?.percent}%
-                                    </Text>
-                                    <Text style={{ fontSize: 14, color: 'white' }}>{emotion?.mood}</Text>
-                                </>
-                            )}
-                        </View>
-                    );
-                }}
-                onPress={handleLabelPress}
-                data={data}
-            />
+            {data && data.length > 0 && (
+                <PieChart
+                    donut
+                    sectionAutoFocus
+                    innerRadius={100}
+                    radius={170}
+                    innerCircleColor={'#232B5D'}
+                    centerLabelComponent={() => {
+                        return (
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                {!emotion ? (
+                                    <Text style={{ fontSize: 14, color: 'white' }}>Press on any tile</Text>
+                                ) : (
+                                    <>
+                                        <Text
+                                            style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
+                                            {emotion?.percent}%
+                                        </Text>
+                                        <Text style={{ fontSize: 14, color: 'white' }}>{emotion?.mood}</Text>
+                                    </>
+                                )}
+                            </View>
+                        );
+                    }}
+                    onPress={handleLabelPress}
+                    data={data}
+                />
+            )}
+
         </View>
     )
 }
