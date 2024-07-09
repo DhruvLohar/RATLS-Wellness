@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useStorageState } from './useStorageState';
 import { fetchFromAPI, postToAPI } from './api';
+import * as SecureStore from 'expo-secure-store';
 
 const AuthContext = React.createContext({
     signIn: () => null,
@@ -27,6 +28,7 @@ export function SessionProvider(props) {
 
     async function signIn(values) {
         const data = await postToAPI("users/login/", values);
+        console.log(data.user?.accessToken)
 
         if (data.success) {
             setStorageState(data.user);
@@ -47,6 +49,7 @@ export function SessionProvider(props) {
 
     function signOut() {
         setStorageState({})
+        SecureStore.setItemAsync('session', JSON.stringify({}));
     }
 
     async function refreshUser() {

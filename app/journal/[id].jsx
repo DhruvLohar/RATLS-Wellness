@@ -48,14 +48,13 @@ export default function JournalEditor() {
 
     async function fetchJournal() {
         const res = await fetchFromAPI(`journals/${btoa(id)}/`);
+        console.log(res)
         
-        if (res.success) {
+        if (res) {
             setDisabled(!res.success)
             setJournal(res?.journal)
             
             richText.current?.setContentHTML(res?.journal?.contentHTML)
-        } else {
-            alert("Cannot load the journal at the moment")
         }
     }
 

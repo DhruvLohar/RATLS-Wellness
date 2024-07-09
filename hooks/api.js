@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // export const API_URL = "http://192.168.1.5:3000/";
 export const API_URL = "https://app.reachandteach.in/"
-const session = JSON.parse(SecureStore.getItem("session") || "{}");
+// const session = JSON.parse(SecureStore.getItem("session") || "{}");
 
 axios.defaults.baseURL = API_URL;
 
@@ -19,6 +19,7 @@ export async function postToAPI(url, data) {
 
 export async function fetchFromAPI(url) {
   try {
+    const session = JSON.parse(SecureStore.getItem("session") || "{}");
     if (session?.accessToken) {
       axios.defaults.headers.common.Authorization = `Bearer ${session?.accessToken}`
     }
@@ -31,6 +32,7 @@ export async function fetchFromAPI(url) {
 }
 
 export async function axiosRequest(url, req_params, sendingMedia) {
+  const session = JSON.parse(SecureStore.getItem("session") || "{}");
 
   try {
     const res = await axios.request({
