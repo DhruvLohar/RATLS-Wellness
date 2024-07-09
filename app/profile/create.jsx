@@ -1,7 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Formik } from 'formik';
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import Typography from "../../theme/typography";
 import Input from "../../components/Input";
@@ -25,6 +27,18 @@ function Info({ title, children }) {
     )
 }
 
+const schema = yup.object().shape({
+    gender: yup.string().required('Gender is required'),
+    age: yup
+        .number()
+        .required('Age is required.')
+        .min(12).max(75),
+    meditationExperience: yup
+        .number("This field should be an integer")
+        .required('Meditation Experience is required.')
+        .min(3).max(200),
+});
+
 export default function createProfile() {
 
     const router = useRouter()
@@ -32,13 +46,28 @@ export default function createProfile() {
 
     const [image, setImage] = useState(null)
     const [avatar, setAvatar] = useState(0)
+    const [loading, setLoading] = useState(false)
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            gender: '',
+            meditationExperience: null,
+            age: null,
+        },
+    });
 
     async function handleCreateProfile(values) {
+        setLoading(true)
 
         if (!image && avatar === -1) {
             alert('Please upload a proper image')
         }
-        
+
         refreshUser();
         const formData = toFormData(values);
         formData.append('avatar', avatar !== -1 ? Avatars[avatar] : image)
@@ -47,6 +76,7 @@ export default function createProfile() {
             method: 'put',
             data: formData
         }, true);
+        setLoading(false)
 
         if (res.success) {
             refreshUser();
@@ -71,41 +101,63 @@ export default function createProfile() {
 
                 <Text style={[Typography.heading3, { marginVertical: 20 }]}>Tell us more about yourself</Text>
 
-                <Formik
-                    initialValues={{ age: '', gender: '', meditationExperience: '' }}
-                    onSubmit={handleCreateProfile}
-                >
-                    {({ handleChange, handleSubmit, values }) => (
-                        <>
-                            <Info title={"Gender"}>
-                                <Input
-                                    placeHolder="Gender" type='default'
-                                    handleFormik={{ name: 'gender', onChange: handleChange, value: values.gender }}
-                                />
-                            </Info>
-                            <Info title={"Age"}>
-                                <Input
-                                    placeHolder="Age" type='numeric'
-                                    handleFormik={{ name: 'age', onChange: handleChange, value: values.age }}
-                                />
-                            </Info>
-                            <Info title={"Meditation Experience (in months)"}>
-                                <Input
-                                    placeHolder="Meditation Experience (in months)"
-                                    type='numeric'
-                                    handleFormik={{ name: 'meditationExperience', onChange: handleChange, value: values.meditationExperience }}
-                                />
-                            </Info>
-                            <Button
-                                title="Continue"
-                                onPress={handleSubmit}
-                                type={"fill"}
-                                style={{ marginBottom: 40 }}
-                                disabled={[values.age, values.meditationExperience, values.gender].includes("")}
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                        <Info title={"Gender"}>
+                            <Input
+                                placeHolder="Gender" type='default'
+                                handleFormik={{ name: 'gender', onChange, value }}
                             />
-                        </>
+                        </Info>
                     )}
-                </Formik>
+                    name="gender"
+                />
+                {errors.gender && <Text style={Typography.errorText}>{errors.gender.message}</Text>}
+
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                        <Info title={"Age"}>
+                            <Input
+                                placeHolder="Age" type='numeric'
+                                handleFormik={{ name: 'age', onChange, value }}
+                            />
+                        </Info>
+                    )}
+                    name="age"
+                />
+                {errors.age && <Text style={Typography.errorText}>{errors.age.message}</Text>}
+
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                        <Info title={"Meditation Experience (in months)"}>
+                            <Input
+                                placeHolder="Meditation Experience (in months)"
+                                type='numeric'
+                                handleFormik={{ name: 'meditationExperience', onChange, value }}
+                            />
+                        </Info>
+                    )}
+                    name="meditationExperience"
+                />
+                {errors.meditationExperience && <Text style={Typography.errorText}>{errors.meditationExperience.message}</Text>}
+
+                <Button
+                    title="Continue"
+                    onPress={handleSubmit(handleCreateProfile)}
+                    isLoading={loading}
+                />
             </ScrollView>
         </SafeAreaView>
     )

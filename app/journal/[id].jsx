@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { Platform, KeyboardAvoidingView, SafeAreaView, ScrollView, Alert, StyleSheet, View, BackHandler, ToastAndroid } from "react-native";
+import { Platform, KeyboardAvoidingView, SafeAreaView, ScrollView, Alert, StyleSheet, View, BackHandler, ToastAndroid, ActivityIndicator } from "react-native";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import * as ImagePicker from 'expo-image-picker';
 import * as Print from 'expo-print';
@@ -18,6 +18,7 @@ export default function JournalEditor() {
 
     const [disabled, setDisabled] = useState(false);
     const [journal, setJournal] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const richText = React.useRef();
     const navigation = useNavigation();
@@ -47,14 +48,16 @@ export default function JournalEditor() {
     }
 
     async function fetchJournal() {
-        const res = await fetchFromAPI(`journals/${btoa(id)}/`);
-        console.log(res)
-        
-        if (res) {
-            setDisabled(!res.success)
-            setJournal(res?.journal)
-            
-            richText.current?.setContentHTML(res?.journal?.contentHTML)
+        try {
+            const res = await fetchFromAPI(`journals/${btoa(id)}/`);
+
+            setDisabled(!res.success);
+            setJournal(res?.journal);
+            richText.current?.setContentHTML(res?.journal?.contentHTML);
+        } catch (error) {
+            console.error("Error fetching journal:", error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -67,18 +70,19 @@ export default function JournalEditor() {
             type: `${pickerResult?.assets[0]?.type}/${ext}`,
             name: `journal-image-${id}.${ext}`,
         };
-        
+
         const data = new FormData();
         data.append('image', image);
 
-        if (!journal) { fetchJournal() }
+        if (!journal) { await fetchJournal() }
 
         if (journal) {
             const res = await axiosRequest(`journals/${journal?._id}/insertImage`, {
                 method: 'post',
                 data: data
             }, true);
-    
+            console.log("image", res, journal)
+
             return res?.image;
         } else { alert('Please try again later') }
     }
@@ -99,8 +103,6 @@ export default function JournalEditor() {
 
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            aspect: [4, 3],
-            allowsEditing: true,
             quality: .6,
         });
 
@@ -113,36 +115,36 @@ export default function JournalEditor() {
                 richText.current?.insertHTML("<br />");
             }
         }
-    }, []);
+    }, [journal, id]);
+
+    const backAction = async () => {
+        try {
+            if (!disabled) {
+                const currentContent = await richText?.current?.getContentHtml();
+                if (currentContent && currentContent !== "") {
+                    const res = await axiosRequest(`journals/${btoa(id)}/`, {
+                        method: 'put',
+                        data: {
+                            contentHTML: currentContent
+                        }
+                    }, false);
+
+                    ToastAndroid.showWithGravity(
+                        res.message,
+                        ToastAndroid.SHORT,
+                        ToastAndroid.CENTER,
+                    );
+                }
+            }
+
+            router.back();
+        } catch (e) {
+            router.back();
+        }
+    };
 
     useEffect(() => {
         fetchJournal()
-        
-        const backAction = async () => {
-            try {
-                if (!disabled) {
-                    const currentContent = await richText?.current?.getContentHtml();
-                    if (currentContent && currentContent !== "") {
-                        const res = await axiosRequest(`journals/${btoa(id)}/`, {
-                            method: 'put',
-                            data: {
-                                contentHTML: currentContent
-                            }
-                        }, false);
-    
-                        ToastAndroid.showWithGravity(
-                            res.message,
-                            ToastAndroid.SHORT,
-                            ToastAndroid.CENTER,
-                        );
-                    }
-                }
-
-                router.back();
-            } catch (e) {
-                router.back();
-            }
-        };
 
         const backHandler = BackHandler.addEventListener(
             'hardwareBackPress',
@@ -151,6 +153,14 @@ export default function JournalEditor() {
 
         return () => backHandler.remove();
     }, [disabled, id])
+
+    if (isLoading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+        )
+    }
 
     return (
         <SafeAreaView style={[styles.container]}>
@@ -162,6 +172,7 @@ export default function JournalEditor() {
                 <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
                     <RichEditor
                         ref={richText}
+                        initialContentHTML={journal?.contentHTML}
                         placeholder={disabled ? "You cannot edit this Journal." : "Start writing here ..."}
                         style={styles.richEditor}
                         disabled={disabled}
@@ -206,6 +217,13 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
+    },
+
+    loadingContainer: {
+        width: "100%",
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
 
     customHeader: {

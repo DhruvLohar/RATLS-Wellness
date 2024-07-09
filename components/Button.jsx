@@ -1,22 +1,62 @@
-import React from 'react';
-import { StyleSheet, Text, Pressable } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Text, Pressable, Animated } from 'react-native';
 import Colors from '../theme/colors';
 import Typography from '../theme/typography';
+import { ArrowRotateRight } from 'iconsax-react-native';
+// import Animated from 'react-native-reanimated';
 
-export default function Button({ title, onPress, type, PrefixIcon, style, textStyles, ...otherProps }) {
+export default function Button({
+    title,
+    onPress,
+    isLoading,
+    type,
+    PrefixIcon,
+    style,
+    textStyles,
+    ...otherProps
+}) {
     const textColor = (type === 'outline') ? Colors.dark : Colors.light
+    const { disabled } = otherProps;
+
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+    useEffect(() => {
+        if (isLoading) {
+            Animated.loop(
+                Animated.timing(rotateAnim, {
+                    toValue: 1,
+                    duration: 1000,
+                    useNativeDriver: true,
+                })
+            ).start();
+        } else {
+            rotateAnim.setValue(0);
+        }
+    }, [isLoading, rotateAnim]);
+
+    const rotate = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg'],
+    });
 
     return (
         <Pressable
             onPress={onPress}
             style={[
                 styles.button,
+                disabled && {backgroundColor: Colors.muted},
                 (type === "outline") && styles.buttonOutline,
                 style
             ]}
             {...otherProps}
         >
-            {PrefixIcon && <PrefixIcon size={24} color={textColor} variant="Bold" />}
+            {PrefixIcon && !isLoading && (
+                <PrefixIcon size={24} color={textColor} variant="Bold" />
+            )}
+            {isLoading && (
+                <Animated.View style={{ transform: [{ rotate }] }}>
+                    <ArrowRotateRight size={24} color={textColor} />
+                </Animated.View>
+            )}
             <Text
                 style={[
                     styles.text,
@@ -24,7 +64,7 @@ export default function Button({ title, onPress, type, PrefixIcon, style, textSt
                     textStyles
                 ]}
             >
-                {title}
+                {!isLoading ? title : ""}
             </Text>
         </Pressable>
     )

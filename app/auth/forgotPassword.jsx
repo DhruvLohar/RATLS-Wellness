@@ -1,17 +1,35 @@
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
-import { Formik } from 'formik';
 import { useRouter } from "expo-router";
 import { Sms } from "iconsax-react-native";
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import Typography from "../../theme/typography";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Layout from "../../theme/layout";
 
+const schema = yup.object().shape({
+    email: yup.string().required('Email is required').email('Please enter a valid email.'),
+});
+
 export default function Login() {
 
     const router = useRouter();
+    const [loading, setLoading] = useState(false)
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            email: '',
+        },
+    });
 
     function handleForgotPass(values) {
         console.log(values)
@@ -27,28 +45,27 @@ export default function Login() {
                 secure.
             </Text>
 
-            <Formik
-                initialValues={{ email: "" }}
-                onSubmit={handleForgotPass}
-            >
-                {({ handleChange, handleSubmit, values }) => (
-                    <>
-                        <View style={{ marginBottom: 25, marginTop: 20 }}>
-                            <Input 
-                                placeHolder="Enter your email" type='email' IconPrefix={Sms} 
-                                handleFormik={{ name: 'email-address', onChange: handleChange, value: values.email }}
-                            />
-                        </View>
-
-                        <Button 
-                            title="Recover" 
-                            onPress={handleSubmit} 
-                            type={"fill"} 
-                            disabled={values.email === ''}
-                        />
-                    </>
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Input
+                        placeHolder="Enter your email" IconPrefix={Sms}
+                        type='email-address'
+                        handleFormik={{ name: 'email', onChange, value: value }}
+                    />
                 )}
-            </Formik>
+                name="email"
+            />
+            {errors.email && <Text style={Typography.errorText}>{errors.email.message}</Text>}
+
+            <Button
+                title="Recover"
+                onPress={handleSubmit(handleForgotPass)}
+                isLoading={loading}
+            />
 
             <Button title="Go Back" onPress={() => router.push('/auth/login')} type={"outline"} />
 

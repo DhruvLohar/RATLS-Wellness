@@ -23,10 +23,10 @@ export default function AppLayout() {
         initializeActivities();
     }, []);
 
-    // Render loading screen until session is loaded or continue flag is set
-    if (isLoading || !continueToApp) {
-        return <AnimatedSplashScreen setAppReady={setContinue} />
-    }
+    // // Render loading screen until session is loaded or continue flag is set
+    // if (isLoading || !continueToApp) {
+    //     return <AnimatedSplashScreen setAppReady={setContinue} />
+    // }
 
     // If session is not available, redirect to login
     if (!session) {

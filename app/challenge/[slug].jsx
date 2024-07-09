@@ -59,6 +59,7 @@ export default function ChallengeScreen() {
                 ToastAndroid.SHORT,
                 ToastAndroid.CENTER,
             );
+            fetchCompletedChallenges()
             setModalVisible(prev => !prev);
             triggerConfetti()
         }

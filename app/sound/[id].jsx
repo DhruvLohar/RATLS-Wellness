@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -32,6 +32,20 @@ export default function MusicScreen() {
             stopAudio();
         };
     }, [playbackInstance]);
+
+    useEffect(() => {
+        async function autoPlay() {
+            if (!playbackInstance) {
+                ToastAndroid.showWithGravity(
+                    "Loading your audio ...",
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER,
+                );
+                await loadAudio();
+            }
+        }
+        autoPlay();
+    }, [])
 
     useEffect(() => {
         if (isPlaying && playbackStatus) {
@@ -100,8 +114,6 @@ export default function MusicScreen() {
                 await playbackInstance.playAsync();
                 setIsPlaying(true);
             }
-        } else {
-            await loadAudio();
         }
     };
 

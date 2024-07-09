@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Formik } from "formik";
 import { useRouter } from "expo-router";
-import { GalleryEdit } from "iconsax-react-native";
+import { GalleryEdit, Sms, User } from "iconsax-react-native";
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useSession } from '../../hooks/auth';
 import Button from "../../components/Button"
@@ -24,6 +26,20 @@ function Info({ title, children }) {
     )
 }
 
+const schema = yup.object().shape({
+    name: yup.string().required('Name is required'),
+    email: yup.string().required('Email is required').email('Please enter a valid email.'),
+    gender: yup.string().required('Gender is required'),
+    age: yup
+        .number()
+        .required('Age is required.')
+        .min(12).max(75),
+    meditationExperience: yup
+        .number()
+        .required('Meditation Experience is required.')
+        .min(3).max(200),
+});
+
 export default function EditProfile() {
 
     const router = useRouter()
@@ -31,16 +47,25 @@ export default function EditProfile() {
 
     const [image, setImage] = useState(null)
     const [avatar, setAvatar] = useState(0)
+    const [loading, setLoading] = useState(false)
 
-    const [userData, setUserData] = useState({
-        name: session?.name || "",
-        email: session?.email || "",
-        gender: session?.gender || "",
-        age: session?.age.toString() || "",
-        meditationExperience: session?.meditationExperience.toString() || "",
-    })
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            name: session?.name || "",
+            email: session?.email || "",
+            gender: session?.gender || "",
+            age: session?.age.toString() || "",
+            meditationExperience: session?.meditationExperience.toString() || "",
+        },
+    });
 
     async function handleUpdateProfile(values) {
+        setLoading(true)
         if (!image && avatar === -1) {
             alert('Please upload a proper image')
         }
@@ -52,6 +77,7 @@ export default function EditProfile() {
             method: 'put',
             data: formData
         }, true);
+        setLoading(false)
 
         if (res.success) {
             refreshUser();
@@ -71,54 +97,100 @@ export default function EditProfile() {
             />
 
             <Text style={[Typography.heading3, { marginTop: 30 }]}>Personal Information</Text>
-            <Formik
-                initialValues={userData}
-                enableReinitialize
-                onSubmit={handleUpdateProfile}
-            >
-                {({ handleChange, handleSubmit, values }) => (
-                    <>
-                        <View style={{ marginBottom: 25, marginTop: 20 }}>
-                            <Info title={"Name"}>
-                                <Input
-                                    placeHolder="Name" type='default'
-                                    handleFormik={{ name: 'name', onChange: handleChange, value: values.name }}
-                                />
-                            </Info>
-                            <Info title="Email">
-                                <Input
-                                    placeHolder="Email" type='email-address'
-                                    handleFormik={{ name: 'email', onChange: handleChange, value: values.email }}
-                                />
-                            </Info>
-                            <Info title={"Gender"}>
-                                <Input
-                                    placeHolder="Gender" type='default'
-                                    handleFormik={{ name: 'gender', onChange: handleChange, value: values.gender }}
-                                />
-                            </Info>
-                            <Info title={"Age"}>
-                                <Input
-                                    placeHolder="Age" type='numeric'
-                                    handleFormik={{ name: 'age', onChange: handleChange, value: values.age }}
-                                />
-                            </Info>
-                            <Info title={"Meditation Experience (in months)"}>
-                                <Input
-                                    placeHolder="Meditation Experience (in months)"
-                                    type='numeric'
-                                    handleFormik={{ name: 'meditationExperience', onChange: handleChange, value: values.meditationExperience }}
-                                />
-                            </Info>
-                        </View>
-                        <Button
-                            title="Update"
-                            onPress={handleSubmit}
-                            type={"fill"}
+            
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Info title={"Name"}>
+                        <Input
+                            placeHolder="Enter your name" IconPrefix={User}
+                            type='name'
+                            handleFormik={{ name: 'name', onChange, value: value }}
                         />
-                    </>
+                    </Info>
                 )}
-            </Formik>
+                name="name"
+            />
+            {errors.name && <Text style={Typography.errorText}>{errors.name.message}</Text>}
+
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Info title={"Email"}>
+                        <Input
+                            placeHolder="Enter your email" IconPrefix={Sms}
+                            type='email-address'
+                            handleFormik={{ name: 'email', onChange, value: value }}
+                        />
+                    </Info>
+                )}
+                name="email"
+            />
+            {errors.email && <Text style={Typography.errorText}>{errors.email.message}</Text>}
+
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Info title={"Gender"}>
+                        <Input
+                            placeHolder="Gender" type='default'
+                            handleFormik={{ name: 'gender', onChange, value }}
+                        />
+                    </Info>
+                )}
+                name="gender"
+            />
+            {errors.gender && <Text style={Typography.errorText}>{errors.gender.message}</Text>}
+
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Info title={"Age"}>
+                        <Input
+                            placeHolder="Age" type='numeric'
+                            handleFormik={{ name: 'age', onChange, value }}
+                        />
+                    </Info>
+                )}
+                name="age"
+            />
+            {errors.age && <Text style={Typography.errorText}>{errors.age.message}</Text>}
+
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Info title={"Meditation Experience (in months)"}>
+                        <Input
+                            placeHolder="Meditation Experience (in months)"
+                            type='numeric'
+                            handleFormik={{ name: 'meditationExperience', onChange, value }}
+                        />
+                    </Info>
+                )}
+                name="meditationExperience"
+            />
+            {errors.meditationExperience && <Text style={Typography.errorText}>{errors.meditationExperience.message}</Text>}
+
+            <Button
+                title="Continue"
+                onPress={handleSubmit(handleUpdateProfile)}
+                isLoading={loading}
+            />
 
         </ScrollView>
     )

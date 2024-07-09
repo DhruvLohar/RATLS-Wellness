@@ -1,8 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Google, Lock, Sms } from "iconsax-react-native";
-import { Formik } from 'formik';
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import Typography from "../../theme/typography";
 import Input from "../../components/Input";
@@ -10,25 +12,55 @@ import Button, { TextButton } from "../../components/Button";
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import { useSession } from "../../hooks/auth";
+import { useState } from "react";
+
+const schema = yup.object().shape({
+    email: yup.string().required('Email is required').email('Please enter a valid email.'),
+    password: yup
+        .string()
+        .required('Password is required.')
+        .min(3, 'Password must contain at least 3 characters.'),
+});
 
 export default function Login() {
 
     const router = useRouter();
     const { signIn } = useSession();
+    const [loading, setLoading] = useState(false)
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    });
 
     async function handleLogin(values) {
+        setLoading(prev => !prev)
+        
         const result = await signIn(values);
-        if (result) {
+        setLoading(prev => !prev)
+
+        if (result) {    
             router.replace('/');
         } else {
-            alert("Invalid Credentials")
+            ToastAndroid.showWithGravity(
+                "Invalid Credentials. Please try again.",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
         }
     }
 
     function handleGoogleLogin() {
         console.log("Google Login Hora")
     }
-    
+
     return (
         <View style={[Layout.screenView, { alignItems: "flex-start", justifyContent: "center" }]}>
             <StatusBar style={"dark"} />
@@ -36,50 +68,52 @@ export default function Login() {
             <Text style={[Typography.heading1]}>Welcome Back</Text>
             <Text style={[Typography.captionText]}>Lorem ipsum doler sit amet.</Text>
 
-            <Formik
-                initialValues={{ email: '', password: '' }}
-                onSubmit={handleLogin}
-            >
-                {({ handleChange, handleSubmit, values }) => (
-                    <>
-                        <View style={{ marginBottom: 25, marginTop: 20 }}>
-                            <Input 
-                                placeHolder="Enter your email" type='email-address' 
-                                IconPrefix={Sms}
-                                handleFormik={{ name: 'email', onChange: handleChange, value: values.email }}
-                            />
-                            <Input 
-                                placeHolder="Enter your password" IconPrefix={Lock} iconNameSuffix={true} 
-                                type='current-password'
-                                handleFormik={{ name: 'password', onChange: handleChange, value: values.password }}
-                            />
-
-                            <TextButton title={"Forgot Password?"} onPress={() => router.push('/auth/forgotPassword')} />
-                        </View>
-                        <Button 
-                            title="Sign in" 
-                            onPress={handleSubmit} 
-                            type={"fill"} 
-                            disabled={[values.email, values.password].includes("")}
-                        />
-                    </>
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Input
+                        placeHolder="Enter your email" IconPrefix={Sms}
+                        type='email-address'
+                        handleFormik={{ name: 'email', onChange, value: value }}
+                    />
                 )}
-            </Formik>
+                name="email"
+            />
+            {errors.email && <Text style={Typography.errorText}>{errors.email.message}</Text>}
 
-            <Button 
-                title="Sign in with Google" 
-                onPress={handleGoogleLogin}
-                PrefixIcon={Google}
-                type={"outline"} 
+            <Controller
+                control={control}
+                rules={{
+                    required: true,
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <Input
+                        placeHolder="Enter your password" IconPrefix={Lock} iconNameSuffix={true}
+                        type='current-password'
+                        handleFormik={{ name: 'password', onChange, value }}
+                    />
+                )}
+                name="password"
+            />
+            {errors.password && <Text style={Typography.errorText}>{errors.password.message}</Text>}
+
+            <Button
+                title="Sign In"
+                onPress={handleSubmit(handleLogin)}
+                isLoading={loading}
             />
 
-            <View style={{ 
-                flexDirection: 'row', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                alignSelf: 'center',
-                marginTop: 10 
-            }}>
+            <Button
+                title="Sign in with Google"
+                onPress={handleGoogleLogin}
+                PrefixIcon={Google}
+                type={"outline"}
+            />
+
+            <View style={styles.bottomText}>
                 <Text style={[Typography.buttonText, { color: Colors.muted }]}>Don't have an account?</Text>
                 <TextButton title={"Register"} onPress={() => router.push('/auth/register')} />
             </View>
@@ -87,3 +121,13 @@ export default function Login() {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    bottomText: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginTop: 10
+    }
+})

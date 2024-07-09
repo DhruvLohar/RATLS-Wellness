@@ -21,8 +21,8 @@ const Typography = StyleSheet.create({
     bodyText: {
         fontSize: 16,
         fontWeight: '400',
-        color: Colors.dark, 
-        fontFamily: 'Poppins_400Regular', 
+        color: Colors.dark,
+        fontFamily: 'Poppins_400Regular',
     },
     buttonText: {
         fontSize: 14,
@@ -36,6 +36,12 @@ const Typography = StyleSheet.create({
         color: Colors.muted, // Adjust color as needed
         fontFamily: 'Poppins_500Medium', // Ensure you have the Poppins font installed
     },
+    errorText: {
+        fontSize: 14,
+        fontWeight: '400',
+        color: "#FF6961", // Adjust color as needed
+        fontFamily: 'Poppins_500Medium',
+    }
 });
 
 export default Typography;

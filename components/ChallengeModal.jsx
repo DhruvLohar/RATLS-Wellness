@@ -14,6 +14,8 @@ export default function ChallengeModal({
 }) {
 
     const challenge = ChallengesJSON.find(item => item.slug === challengeSlug);
+
+    const isChallengeCompleted = completedChallenges.includes(selectedChallenge)
     const title = challenge.challenges[selectedChallenge];
 
     return (
@@ -41,9 +43,9 @@ export default function ChallengeModal({
                             {title}
                         </Text>
                         <Button 
-                            title={"Challenge Completed"} 
+                            title={isChallengeCompleted ? "Challenge Completed" : "Mark as completed"} 
                             onPress={() => onComplete(selectedChallenge)}
-                            disabled={completedChallenges.includes(selectedChallenge)}
+                            disabled={isChallengeCompleted}
                         />
                     </View>
                 </View>

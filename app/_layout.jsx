@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SplashScreen, Stack } from "expo-router";
 
 import {
@@ -14,10 +14,13 @@ import { SessionProvider } from "../hooks/auth";
 import Header from "../components/Header";
 import { StyleSheet } from "react-native";
 import Colors from "../theme/colors";
+import AnimatedSplashScreen from "../components/AnimatedSplashScreen";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
+
+    const [continueToApp, setContinue] = useState(false);
 
     const [fontsLoaded, fontError] = useFonts({
         Poppins_300Light,
@@ -37,6 +40,11 @@ export default function Layout() {
     if (!fontsLoaded && !fontError) {
         return null;
     }
+
+    if (fontsLoaded && !continueToApp) {
+        return <AnimatedSplashScreen setAppReady={setContinue} />
+    }
+
 
     return (
         <SessionProvider>

@@ -36,7 +36,7 @@ export default function Input({
                 keyboardType={type}
                 multiline={isTextarea}
 
-                onChangeText={onChange(name)}
+                onChangeText={onChange}
                 value={value}
             />
 

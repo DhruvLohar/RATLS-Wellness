@@ -18,8 +18,10 @@ import LottieView from "lottie-react-native";
 export default function Home() {
 
     const router = useRouter()
-    const [lastAppOpen, setAppOpen] = useState("")
     const { session, refreshUser } = useSession();
+
+    const [todaysMood, setTodaysMood] = useState(null);
+    const [lastAppOpen, setAppOpen] = useState("")
 
     const confettiRef = useRef(null);
 
@@ -46,36 +48,57 @@ export default function Home() {
     ];
 
     async function updateStreak(lastLogin) {
+        if (!todaysMood) {
+            let today = new Date().toLocaleDateString('en-US')
+            if (session?.moodMap && Object.keys(session?.moodMap).includes(today)) {
+                let mood = Moods.find(item => item.name === session.moodMap[today]);
+                setTodaysMood(mood)
+            }
+        }
         const res = await axiosRequest(`users/${session?._id}/updateStreaks/`, {
             method: 'put',
             data: { lastUserLogin: lastLogin }
         }, false);
+
         if (res.success) {
             refreshUser()
         }
     }
 
     async function handleMoodSelect(mood) {
-        const res = await axiosRequest(`users/${session?._id}/updateMoodMap/`, {
-            method: 'put',
-            data: { mood }
-        }, false);
+        if (!todaysMood) {
+            const res = await axiosRequest(`users/${session?._id}/updateMoodMap/`, {
+                method: 'put',
+                data: { mood }
+            }, false);
 
-        if (!res.success) {
+            let message = res?.success ? "Your mood was added for the day!" : "You can update your mood only once."
             ToastAndroid.showWithGravity(
-                "You can update your mood only once.",
+                message,
                 ToastAndroid.SHORT,
                 ToastAndroid.CENTER,
             );
-        } else {
-            ToastAndroid.showWithGravity(
-                "Your mood was added for the day!",
-                ToastAndroid.SHORT,
-                ToastAndroid.CENTER,
-            );
-            triggerConfetti();
+    
+            if (res.success) {
+                triggerConfetti();
+            }
         }
     }
+
+    const EmojiItem = ({mood, index}) => (
+        <Pressable
+            key={index}
+            android_ripple={{
+                color: Colors.muted,
+                borderless: true
+            }}
+            style={{ alignItems: 'center', marginRight: 15 }}
+            onPress={() => handleMoodSelect(mood.name)}
+        >
+            <Text style={{ fontSize: 46, marginBottom: 5 }}>{mood.emoji}</Text>
+            <Text style={[Typography.bodyText, { color: Colors.muted, fontSize: 12 }]}>{mood.name}</Text>
+        </Pressable>
+    )
 
     useEffect(() => {
         updateStreak();
@@ -127,7 +150,9 @@ export default function Home() {
                     </Text>
                 </View>
 
-                <Text style={[Typography.heading3]}>How are you feeling today ?</Text>
+                <Text style={[Typography.heading3]}>
+                    {todaysMood ? "Your mood for today is" : "How are you feeling today ?"}
+                </Text>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -136,16 +161,15 @@ export default function Home() {
                         { marginVertical: 10 }
                     ]}
                 >
-                    {Moods.map((mood, i) => (
-                        <Pressable
-                            key={i}
-                            style={{ alignItems: 'center', marginRight: 15 }}
-                            onPress={() => handleMoodSelect(mood.name)}
-                        >
-                            <Text style={{ fontSize: 46, marginBottom: 5 }}>{mood.emoji}</Text>
-                            <Text style={[Typography.bodyText, { color: Colors.muted, fontSize: 12 }]}>{mood.name}</Text>
-                        </Pressable>
-                    ))}
+                    {todaysMood
+                        ? (<EmojiItem mood={todaysMood} index={1} />)
+                        : (
+                            <>
+                                {Moods.map((mood, i) => <EmojiItem mood={mood} key={i} />)}
+                            </>
+                        )
+                    }
+
                 </ScrollView>
 
                 <View style={styles.navCardBase}>
@@ -182,7 +206,7 @@ export default function Home() {
                     source={require('../../assets/lottie/confetti.json')}
                     autoPlay={false}
                     loop={false}
-                    style={[{width: '100%', height: '100%'}]}
+                    style={[{ width: '100%', height: '100%' }]}
                     resizeMode='cover'
                     pointerEvents="none"
                 />
