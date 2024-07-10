@@ -80,6 +80,7 @@ export default function Home() {
             );
     
             if (res.success) {
+                refreshUser();
                 triggerConfetti();
             }
         }

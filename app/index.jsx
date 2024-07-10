@@ -15,18 +15,13 @@ Notifications.setNotificationHandler({
 });
 
 export default function AppLayout() {
-    const { session, isLoading } = useSession();
-    const [continueToApp, setContinue] = useState(false);
+    const { session, refreshUser } = useSession();
 
     // Initialize activities or perform any other setup as needed
     useEffect(() => {
+        refreshUser();
         initializeActivities();
     }, []);
-
-    // // Render loading screen until session is loaded or continue flag is set
-    // if (isLoading || !continueToApp) {
-    //     return <AnimatedSplashScreen setAppReady={setContinue} />
-    // }
 
     // If session is not available, redirect to login
     if (!session) {
@@ -44,5 +39,5 @@ export default function AppLayout() {
     }
 
     // If session is valid and profile is created, redirect to home
-    return <Redirect href="/tabs/home" />
+    return <Redirect href="/(tabs)/home" />
 }

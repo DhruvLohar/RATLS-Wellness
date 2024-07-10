@@ -62,6 +62,12 @@ export default function ChallengeScreen() {
             fetchCompletedChallenges()
             setModalVisible(prev => !prev);
             triggerConfetti()
+        } else {
+            ToastAndroid.showWithGravity(
+                res?.message || "You can complete this challenge tommorrow",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
         }
     }
 

@@ -32,6 +32,7 @@ export function SessionProvider(props) {
 
         if (data.success) {
             setStorageState(data.user);
+            SecureStore.setItemAsync('session', JSON.stringify(data.user));
         }
 
         return data.success;
@@ -42,6 +43,7 @@ export function SessionProvider(props) {
 
         if (data?.success) {
             setStorageState(data.user);
+            SecureStore.setItemAsync('session', JSON.stringify(data.user));
         }
 
         return data;
@@ -55,6 +57,7 @@ export function SessionProvider(props) {
     async function refreshUser() {
         const res = await fetchFromAPI('users/');
         setStorageState(res.user);
+        SecureStore.setItemAsync('session', JSON.stringify(res.user));
     }
 
     useEffect(() => {
