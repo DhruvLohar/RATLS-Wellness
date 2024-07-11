@@ -3,16 +3,39 @@ import * as SecureStore from 'expo-secure-store';
 // Function to initialize the 'activites' key with stringified JSON data if it doesn't already exist
 export async function initializeActivities() {
     const existingData = await SecureStore.getItemAsync('activites');
+
     if (!existingData) {
         const initialData = {
             lastWaterIntake: null,
             waterIntake: 0,
             lastAppOpen: null,
+            lastChallengeUpdate: {
+                "morning_routine": null,
+                "happiness": null,
+                "social_anxiety": null,
+                "declutter": null,
+                "self_care": null,
+                "sleep_schedule": null,
+            }
         };
 
         await SecureStore.setItemAsync('activites', JSON.stringify(initialData));
         console.log('Initialized activities in secure storage');
     } else {
+        if (!Object.keys(existingData).includes("lastChallengeUpdate")) {
+            await SecureStore.setItemAsync('activites', JSON.stringify({
+                ...existingData,
+                lastChallengeUpdate: {
+                    "morning_routine": null,
+                    "happiness": null,
+                    "social_anxiety": null,
+                    "declutter": null,
+                    "self_care": null,
+                    "sleep_schedule": null,
+                }
+            }));
+        }
+
         console.log('Activities already initialized');
     }
 }
@@ -51,7 +74,7 @@ export async function isFirstLoginOfDay() {
         const isDifferentDay = now.getDate() !== lastAppOpen.getDate() ||
             now.getMonth() !== lastAppOpen.getMonth() ||
             now.getFullYear() !== lastAppOpen.getFullYear();
-        
+
         return isDifferentDay;
     } catch (error) {
         console.error('Error checking if first login of the day:', error);

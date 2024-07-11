@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
+import { Picker } from "@react-native-picker/picker";
 import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -108,10 +109,14 @@ export default function createProfile() {
                     }}
                     render={({ field: { onChange, value } }) => (
                         <Info title={"Gender"}>
-                            <Input
-                                placeHolder="Gender" type='default'
-                                handleFormik={{ name: 'gender', onChange, value }}
-                            />
+                            <Picker
+                                selectedValue={value}
+                                onValueChange={onChange}
+                            >
+                                <Picker.Item label="Male" value="Male" />
+                                <Picker.Item label="Female" value="Female" />
+                                <Picker.Item label="Other" value="Other" />
+                            </Picker>
                         </Info>
                     )}
                     name="gender"

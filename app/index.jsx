@@ -1,10 +1,11 @@
 import { Redirect, Stack } from 'expo-router';
-import { useSession } from '../hooks/auth';
-import { Text, View } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { initializeActivities, updateActivity } from '../hooks/activites';
 import { useEffect, useState } from 'react';
-import AnimatedSplashScreen from '../components/AnimatedSplashScreen';
+import { ActivityIndicator, View } from 'react-native';
+import Colors from '../theme/colors';
+
+import { useSession } from '../hooks/auth';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -15,13 +16,28 @@ Notifications.setNotificationHandler({
 });
 
 export default function AppLayout() {
-    const { session, refreshUser } = useSession();
+    const { session, refreshUser, isLoading } = useSession();
 
-    // Initialize activities or perform any other setup as needed
     useEffect(() => {
-        refreshUser();
-        initializeActivities();
+        const initialize = async () => {
+            initializeActivities();
+        };
+
+        initialize();
     }, []);
+
+    if (isLoading) {
+        return (
+            <View style={{
+                width: "100%",
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+        )
+    }
 
     // If session is not available, redirect to login
     if (!session) {
@@ -38,6 +54,6 @@ export default function AppLayout() {
         return <Redirect href="/profile/create" />
     }
 
-    // If session is valid and profile is created, redirect to home
+    // return <Redirect href="/profile/create" />
     return <Redirect href="/(tabs)/home" />
 }

@@ -9,6 +9,7 @@ import { useLocalSearchParams } from 'expo-router';
 import ChallengeModal from '../../components/ChallengeModal';
 import { axiosRequest, fetchFromAPI } from '../../hooks/api';
 import LottieView from 'lottie-react-native';
+import { getActivities, initializeActivities, updateActivity } from '../../hooks/activites';
 
 export default function ChallengeScreen() {
 
@@ -28,7 +29,37 @@ export default function ChallengeScreen() {
 
     const data = Array.from({ length: 21 }, (_, index) => ({ id: `${index + 1}`, number: index + 1 }));
 
-    function toggleModal(challengeId) {
+    async function checkChallengeValid() {
+        const activites = await getActivities()
+        const now = new Date();
+        const lastUpdateISO = activites?.lastChallengeUpdate[challenge.slug];
+
+        if (lastUpdateISO) {
+            const lastUpdated = new Date(lastUpdateISO);
+            const hoursPassed = Math.abs(now - lastUpdated) / 36e5;
+
+            if (hoursPassed < 24) {
+                const remainingHours = Math.round(24 - hoursPassed);
+                return `Cannot mark the challenge complete within 24 hours of the last update. You can complete the challenge after ${remainingHours} hours.`
+            }
+        }
+
+        return false
+    }
+
+    async function toggleModal(challengeId) {
+
+        const error = await checkChallengeValid();
+
+        if (error) {
+            ToastAndroid.showWithGravity(
+                error,
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
+            return;
+        }
+
         if (
             (completedChallenges.length === 0 && challengeId !== 0 ||
             completedChallenges.length > 0 && Math.max(...completedChallenges) !== challengeId - 1) &&
@@ -53,18 +84,25 @@ export default function ChallengeScreen() {
                 challengeIndex: index
             }
         }, false);
+
         if (res.success) {
+            const activites = await getActivities();
+            updateActivity('lastChallengeUpdate', { 
+                ...activites?.lastChallengeUpdate, 
+                [challenge.slug]: new Date().toISOString() 
+            })
+            fetchCompletedChallenges()
+            setModalVisible(prev => !prev);
+            triggerConfetti()
+
             ToastAndroid.showWithGravity(
                 "Congratulations on completing this challenge! Keep it up.",
                 ToastAndroid.SHORT,
                 ToastAndroid.CENTER,
             );
-            fetchCompletedChallenges()
-            setModalVisible(prev => !prev);
-            triggerConfetti()
         } else {
             ToastAndroid.showWithGravity(
-                res?.message || "You can complete this challenge tommorrow",
+                res?.message || "This challenge cannot be completed now.",
                 ToastAndroid.SHORT,
                 ToastAndroid.CENTER,
             );

@@ -28,11 +28,9 @@ export function SessionProvider(props) {
 
     async function signIn(values) {
         const data = await postToAPI("users/login/", values);
-        console.log(data.user?.accessToken)
 
         if (data.success) {
-            setStorageState(data.user);
-            SecureStore.setItemAsync('session', JSON.stringify(data.user));
+            await setStorageState(data.user);
         }
 
         return data.success;
@@ -42,22 +40,19 @@ export function SessionProvider(props) {
         const data = await postToAPI("users/", values);
 
         if (data?.success) {
-            setStorageState(data.user);
-            SecureStore.setItemAsync('session', JSON.stringify(data.user));
+            await setStorageState(data.user);
         }
 
         return data;
     }
 
-    function signOut() {
-        setStorageState({})
-        SecureStore.setItemAsync('session', JSON.stringify({}));
+    async function signOut() {
+        await setStorageState(null)
     }
 
     async function refreshUser() {
         const res = await fetchFromAPI('users/');
-        setStorageState(res.user);
-        SecureStore.setItemAsync('session', JSON.stringify(res.user));
+        await setStorageState(res.user);
     }
 
     useEffect(() => {

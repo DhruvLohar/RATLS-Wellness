@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { GalleryEdit, Sms, User } from "iconsax-react-native";
+import { Sms, User } from "iconsax-react-native";
+import { Picker } from "@react-native-picker/picker";
 import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -58,7 +59,7 @@ export default function EditProfile() {
         defaultValues: {
             name: session?.name || "",
             email: session?.email || "",
-            gender: session?.gender || "",
+            gender: session?.gender || "Male",
             age: session?.age.toString() || "",
             meditationExperience: session?.meditationExperience.toString() || "",
         },
@@ -97,7 +98,7 @@ export default function EditProfile() {
             />
 
             <Text style={[Typography.heading3, { marginTop: 30 }]}>Personal Information</Text>
-            
+
             <Controller
                 control={control}
                 rules={{
@@ -141,10 +142,14 @@ export default function EditProfile() {
                 }}
                 render={({ field: { onChange, value } }) => (
                     <Info title={"Gender"}>
-                        <Input
-                            placeHolder="Gender" type='default'
-                            handleFormik={{ name: 'gender', onChange, value }}
-                        />
+                        <Picker
+                            selectedValue={value}
+                            onValueChange={(val) => onChange(val)}
+                        >
+                            <Picker.Item label="Male" value="Male" />
+                            <Picker.Item label="Female" value="Female" />
+                            <Picker.Item label="Other" value="Other" />
+                        </Picker>
                     </Info>
                 )}
                 name="gender"
@@ -187,7 +192,7 @@ export default function EditProfile() {
             {errors.meditationExperience && <Text style={Typography.errorText}>{errors.meditationExperience.message}</Text>}
 
             <Button
-                title="Continue"
+                title="Update"
                 onPress={handleSubmit(handleUpdateProfile)}
                 isLoading={loading}
             />

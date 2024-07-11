@@ -48,13 +48,6 @@ export default function Home() {
     ];
 
     async function updateStreak(lastLogin) {
-        if (!todaysMood) {
-            let today = new Date().toLocaleDateString('en-US')
-            if (session?.moodMap && Object.keys(session?.moodMap).includes(today)) {
-                let mood = Moods.find(item => item.name === session.moodMap[today]);
-                setTodaysMood(mood)
-            }
-        }
         const res = await axiosRequest(`users/${session?._id}/updateStreaks/`, {
             method: 'put',
             data: { lastUserLogin: lastLogin }
@@ -78,7 +71,7 @@ export default function Home() {
                 ToastAndroid.SHORT,
                 ToastAndroid.CENTER,
             );
-    
+
             if (res.success) {
                 refreshUser();
                 triggerConfetti();
@@ -86,7 +79,7 @@ export default function Home() {
         }
     }
 
-    const EmojiItem = ({mood, index}) => (
+    const EmojiItem = ({ mood, index }) => (
         <Pressable
             key={index}
             android_ripple={{
@@ -104,16 +97,28 @@ export default function Home() {
     useEffect(() => {
         updateStreak();
 
-        (async () => {
-            const firstLogin = await isFirstLoginOfDay();
-            const activites = await getActivities();
-            setAppOpen(activites?.lastAppOpen);
+        // (async () => {
+        //     const firstLogin = await isFirstLoginOfDay();
+        //     const activites = await getActivities();
+        //     setAppOpen(activites?.lastAppOpen);
 
-            if (firstLogin) {
-                console.log(firstLogin)
+        //     if (firstLogin) {
+        //         console.log(firstLogin)
+        //     }
+        // })();
+    }, [])
+
+    useEffect(() => {
+        (async () => {
+            if (!todaysMood) {
+                let today = new Date().toLocaleDateString('en-US')
+                if (session?.moodMap && Object.keys(session?.moodMap).includes(today)) {
+                    let mood = Moods.find(item => item.name === session.moodMap[today]);
+                    setTodaysMood(mood)
+                }
             }
         })();
-    }, [])
+    }, [session])
 
     return (
         <>

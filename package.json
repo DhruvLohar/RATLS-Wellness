@@ -45,7 +45,8 @@
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.8.6",
     "react-native-youtube-iframe": "^2.3.0",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "@react-native-picker/picker": "2.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
