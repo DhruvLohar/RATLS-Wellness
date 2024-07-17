@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "261729220393",
+    "project_id": "ratlswellness-3a150",
+    "storage_bucket": "ratlswellness-3a150.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261729220393:android:d823644c1a87f5b8172938",
+        "android_client_info": {
+          "package_name": "com.dhruvlohar.ratls_wellness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "261729220393-24d74fjv36sc9ki96sqp9m5hf305ol76.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dhruvlohar.ratls_wellness",
+            "certificate_hash": "9457d19cc32d5dd570852ae70f18153653f77806"
+          }
+        },
+        {
+          "client_id": "261729220393-baernh4326m1v6emb2f3ocpc6vvv89t8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dhruvlohar.ratls_wellness",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "261729220393-td6ni9h7pb4h3185rssreo2s7r2ud0ub.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dhruvlohar.ratls_wellness",
+            "certificate_hash": "b7888a264f1b23ece6feaf55c99af963ea928415"
+          }
+        },
+        {
+          "client_id": "261729220393-2hrk0o6q6tubgl71sm0n04fef3n5v4sq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCa49iuDJsd4mZNnYQfs6RvzFmRkO3kOJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "261729220393-2hrk0o6q6tubgl71sm0n04fef3n5v4sq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
