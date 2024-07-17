@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useStorageState } from './useStorageState';
 import { fetchFromAPI, postToAPI } from './api';
-import * as SecureStore from 'expo-secure-store';
+import {
+    GoogleSignin
+} from '@react-native-google-signin/google-signin';
 
 const AuthContext = React.createContext({
     signIn: () => null,
@@ -40,6 +42,7 @@ export function SessionProvider(props) {
         const data = await postToAPI("users/", values);
 
         if (data?.success) {
+            console.log(data.user)
             await setStorageState(data.user);
         }
 
@@ -47,6 +50,9 @@ export function SessionProvider(props) {
     }
 
     async function signOut() {
+        if (session?.googleId) {
+            await GoogleSignin.signOut();
+        }
         await setStorageState(null)
     }
 

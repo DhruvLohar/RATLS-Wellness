@@ -44,6 +44,6 @@ export async function schedulePushNotification({
             body: body,
             data: { data: 'goes here' },
         },
-        trigger: { seconds: 1 },
+        trigger: null,
     });
 }

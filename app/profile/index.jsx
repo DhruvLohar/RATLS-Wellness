@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Edit2 } from "iconsax-react-native";
+import { Edit2, Logout } from "iconsax-react-native";
 
 import { timesince } from "../../services/constants"
 import { useSession } from '../../hooks/auth';
@@ -33,19 +33,21 @@ export default function Profile() {
 
             <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'flex-start' }]}>
                 <Image
-                    source={{ uri: session?.avatar }}
+                    source={{ uri: session?.avatar || "https://beforeigosolutions.com/wp-content/uploads/2021/12/dummy-profile-pic-300x300-1.png" }}
                     style={styles.profile}
                 />
                 <View>
-                    <Text style={Typography.heading2}>{session?.name}</Text>
-                    <Text style={[Typography.captionText, { marginTop: -6, fontSize: 14 }]}>Last Login: {timesince(session?.lastLogin)}</Text>
+                    <Text
+                        numberOfLines={1}
+                        ellipsizeMode='tail'
+                        style={[Typography.heading2, { fontSize: 20, width: '100%' }]}
+                    >
+                        {session?.name && session?.name.length > 25 ? (
+                            `${session?.name.slice(0, 25)}...`
+                        ) : session?.name}
+                    </Text>
+                    <Text style={[Typography.captionText, { marginTop: -2, fontSize: 12 }]}>Last Login: {timesince(session?.lastLogin)}</Text>
                 </View>
-
-                <Edit2
-                    color={Colors.dark} size={34}
-                    style={{ marginLeft: 'auto' }}
-                    onPress={() => router.push('/profile/edit')}
-                />
             </View>
 
             <Text style={[Typography.heading3, { marginTop: 30 }]}>Personal Information</Text>
@@ -55,8 +57,15 @@ export default function Profile() {
             <Info title="Meditation Experience" value={`${session?.meditationExperience} months`} />
 
             <Button
-                title={"Logout"}
+                title={"Edit Profile"}
+                PrefixIcon={Edit2}
                 style={{ marginTop: 20 }}
+                onPress={() => router.push('/profile/edit')}
+            />
+            <Button
+                title={"Logout"}
+                type="outline"
+                PrefixIcon={Logout}
                 onPress={handleLogout}
             />
         </ScrollView>

@@ -67,7 +67,7 @@ export default function Tracker() {
     useEffect(() => {
         (async () => {
             const activites = await getActivities();
-            setWaterIntake(activites.waterIntake);
+            setWaterIntake(activites?.waterIntake || 0);
         })();
     }, [])
 
@@ -77,10 +77,7 @@ export default function Tracker() {
                 <Text style={[Typography.heading1]}>Drink Water</Text>
                 <Text style={[Typography.captionText]}>Tap on the card below after your drank a glass of water to mark your progress.</Text>
 
-                <Pressable
-                    style={styles.waterContainer}
-                    onPress={handleWaterClick}
-                >
+                <View style={styles.waterContainer}>
                     <CircularProgress
                         progress={Math.round((waterIntake / 3000) * 100)}
                         outerCircleColor={Colors.inputBG}
@@ -94,31 +91,40 @@ export default function Tracker() {
                     <Text style={[Typography.captionText, { marginTop: 10 }]}>Completed</Text>
                     <Text style={Typography.heading3}>{waterIntake} / 3000 ml</Text>
                     <Image source={waterBoy} style={styles.waterImage} />
-                </Pressable>
+                </View>
 
                 <View style={styles.row}>
-                    <View style={[styles.box, { backgroundColor: '#919AFF' }]}>
-                        <Text style={[Typography.heading3, { color: Colors.light }]}>Dream</Text>
-                        <Text style={[Typography.captionText, { color: Colors.light, marginTop: -5 }]}>MUSIC</Text>
-
-                        <Pressable style={[
-                            styles.cardBtn,
-                            { backgroundColor: Colors.light }
-                        ]}
-                            onPress={() => router.push('/(tabs)/meditate')}
-                        >
-                            <Text style={{ fontWeight: 'bold', color: Colors.dark }}>Explore</Text>
-                        </Pressable>
-                    </View>
                     <View style={[styles.box, { backgroundColor: '#FDCE83' }]}>
-                        <Text style={[Typography.heading3, { color: Colors.dark }]}>Stories</Text>
-                        <Text style={[Typography.captionText, { color: Colors.dark, marginTop: -5 }]}>READ</Text>
+                        <Text style={[Typography.heading3, { color: Colors.dark }]}>Sleep Well</Text>
+                        <Text style={[Typography.captionText, { color: Colors.dark, marginTop: -5 }]}>
+                            SOUNDSCAPES
+                        </Text>
 
                         <Pressable style={[
                             styles.cardBtn,
                             { backgroundColor: Colors.dark }
-                        ]}>
+                        ]}
+                            onPress={() => router.push('/(tabs)/meditate')}
+                        >
                             <Text style={{ fontWeight: 'bold', color: Colors.light }}>Explore</Text>
+                        </Pressable>
+                    </View>
+                    <View style={[styles.box, { backgroundColor: '#919AFF' }]}>
+                        <Text style={[Typography.heading3, { color: Colors.light }]}>Water Tracker</Text>
+                        <Text style={[Typography.captionText, { color: Colors.light, marginTop: -5 }]}>
+                            TAP TO MARK 
+                        </Text>
+
+                        <Pressable 
+                            onPress={handleWaterClick}
+                            style={[
+                                styles.cardBtn,
+                                { backgroundColor: Colors.dark }
+                            ]}
+                        >
+                            <Text style={{ fontWeight: 'bold', color: Colors.light }}>
+                                Add Record
+                            </Text>
                         </Pressable>
                     </View>
                 </View>

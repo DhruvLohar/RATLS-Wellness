@@ -13,7 +13,13 @@ import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import { useSession } from "../../hooks/auth";
 
-import { useState } from "react";
+import {
+    isErrorWithCode,
+    statusCodes,
+    GoogleSignin
+} from '@react-native-google-signin/google-signin';
+
+import { useEffect, useState } from "react";
 
 const schema = yup.object().shape({
     email: yup.string().required('Email is required').email('Please enter a valid email.'),
@@ -26,7 +32,7 @@ const schema = yup.object().shape({
 export default function Login() {
 
     const router = useRouter();
-    const { signIn } = useSession();
+    const { signIn, signUp } = useSession();
     const [loading, setLoading] = useState(false)
 
     const {
@@ -41,13 +47,19 @@ export default function Login() {
         },
     });
 
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: '261729220393-2hrk0o6q6tubgl71sm0n04fef3n5v4sq.apps.googleusercontent.com',
+            offlineAccess: true
+        })
+    }, [])
+
     async function handleLogin(values) {
         setLoading(prev => !prev)
-        
         const result = await signIn(values);
         setLoading(prev => !prev)
 
-        if (result) {    
+        if (result) {
             router.replace('/');
         } else {
             ToastAndroid.showWithGravity(
@@ -58,8 +70,53 @@ export default function Login() {
         }
     }
 
-    function handleGoogleLogin() {
-        console.log("Google Login Hora")
+    async function handleGoogleLogin() {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const { user } = await GoogleSignin.signIn();
+
+            const data = {
+                name: user.givenName + " " + user.familyName,
+                email: user.email,
+                googleId: user.id,
+                avatar: user.photo,
+                thruGoogle: true
+            }
+            setLoading(prev => !prev)
+            const result = await signUp(data);
+            setLoading(prev => !prev)
+
+            if (result.success) {
+                router.replace(result?.profileCompleted ? '/(tabs)/home' : '/profile/create');
+            } else {
+                await GoogleSignin.signOut();
+                ToastAndroid.showWithGravity(
+                    result?.message || "Something went wrong",
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER,
+                );
+            }
+        } catch (error) {
+            if (isErrorWithCode(error)) {
+                switch (error.code) {
+                    case statusCodes.NO_SAVED_CREDENTIAL_FOUND:
+                        alert("NO_SAVED_CREDENTIAL_FOUND")
+                        break;
+                    case statusCodes.SIGN_IN_CANCELLED:
+                        alert("SIGN_IN_CANCELLED")
+                        break;
+                    case statusCodes.ONE_TAP_START_FAILED:
+                        alert("ONE_TAP_START_FAILED")
+                        break;
+                    case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                        alert("PLAY_SERVICES_NOT_AVAILABLE")
+                        break;
+                    default:
+                        console.log("Something Went Wrong")
+                        break
+                }
+            }
+        }
     }
 
     return (

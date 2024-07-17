@@ -1,8 +1,8 @@
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Function to initialize the 'activites' key with stringified JSON data if it doesn't already exist
 export async function initializeActivities() {
-    const existingData = await SecureStore.getItemAsync('activites');
+    const existingData = await AsyncStorage.getItem('activites');
 
     if (!existingData) {
         const initialData = {
@@ -19,11 +19,11 @@ export async function initializeActivities() {
             }
         };
 
-        await SecureStore.setItemAsync('activites', JSON.stringify(initialData));
+        await AsyncStorage.setItem('activites', JSON.stringify(initialData));
         console.log('Initialized activities in secure storage');
     } else {
         if (!Object.keys(existingData).includes("lastChallengeUpdate")) {
-            await SecureStore.setItemAsync('activites', JSON.stringify({
+            await AsyncStorage.setItem('activites', JSON.stringify({
                 ...existingData,
                 lastChallengeUpdate: {
                     "morning_routine": null,
@@ -42,7 +42,7 @@ export async function initializeActivities() {
 
 // Function to get the JSON data from the 'activites' key
 export async function getActivities() {
-    const activitiesData = await SecureStore.getItemAsync('activites');
+    const activitiesData = await AsyncStorage.getItem('activites');
     return activitiesData ? JSON.parse(activitiesData) : null;
 }
 
@@ -51,7 +51,7 @@ export async function updateActivity(key, value) {
     const activitiesData = await getActivities();
     if (activitiesData) {
         activitiesData[key] = value;
-        await SecureStore.setItemAsync('activites', JSON.stringify(activitiesData));
+        await AsyncStorage.setItem('activites', JSON.stringify(activitiesData));
         console.log(`Updated ${key} in activities`);
     } else {
         console.error('Failed to update activities: No activities data found');

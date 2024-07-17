@@ -12,7 +12,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      "@react-native-google-signin/google-signin"
     ],
     "name": "RATLS Wellness",
     "slug": "ratls_wellness",
@@ -25,7 +26,8 @@
       }
     },
     "android": {
-      "package": "com.dhruvlohar.ratls_wellness"
+      "package": "com.dhruvlohar.ratls_wellness",
+      "googleServicesFile": "./google-services.json"
     }
   }
 }

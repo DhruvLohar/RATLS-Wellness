@@ -22,7 +22,7 @@ export default function AvatarSelection({
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [4, 4],
+            aspect: [1, 1],
             quality: 1,
         });
 
@@ -61,7 +61,7 @@ export default function AvatarSelection({
                 marginVertical: 20,
                 height: 100,
             }}>
-                {image?.uri && (
+                {image?.uri && avatar === -1 && (
                     <Pressable
                         onPress={() => setAvatar(-1)}
                     >

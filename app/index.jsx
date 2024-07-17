@@ -1,28 +1,44 @@
+import messaging from '@react-native-firebase/messaging';
+
 import { Redirect, Stack } from 'expo-router';
-import * as Notifications from 'expo-notifications';
-import { initializeActivities, updateActivity } from '../hooks/activites';
-import { useEffect, useState } from 'react';
+import { initializeActivities } from '../hooks/activites';
+import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import Colors from '../theme/colors';
 
 import { useSession } from '../hooks/auth';
 
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-    }),
-});
-
 export default function AppLayout() {
     const { session, refreshUser, isLoading } = useSession();
 
+
     useEffect(() => {
+
         const initialize = async () => {
             initializeActivities();
         };
 
+        const requestUserPermission = async () => {
+            const authStatus = await messaging().requestPermission();
+            const enabled =
+                authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+                authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+            if (enabled) {
+                getFcmToken();
+            }
+        };
+
+        const getFcmToken = async () => {
+            const fcmToken = await messaging().getToken();
+            if (fcmToken) {
+                console.log('Your Firebase Cloud Messaging Token is:', fcmToken);
+            } else {
+                console.log('Failed to get FCM token');
+            }
+        };
+
+        requestUserPermission();
         initialize();
     }, []);
 

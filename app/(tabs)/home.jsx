@@ -1,4 +1,5 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import messaging from '@react-native-firebase/messaging';
 
 import quoteBg from "../../assets/images/quoteBg.png"
 import { useSession } from '../../hooks/auth';
@@ -97,6 +98,10 @@ export default function Home() {
     useEffect(() => {
         updateStreak();
 
+        // getToken()
+        //     .then(res => console.log(res))
+        //     .catch(err => console.log(err))
+
         // (async () => {
         //     const firstLogin = await isFirstLoginOfDay();
         //     const activites = await getActivities();
@@ -124,19 +129,25 @@ export default function Home() {
         <>
             <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
 
-                <View style={[Layout.flexRowCenter, { width: '100%' }]}>
+                <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'space-between' }]}>
                     <Link href={"/profile"}>
                         <View style={[Layout.flexRowCenter]}>
-                            <Image source={{ uri: session?.avatar }} style={styles.profileImage} />
+                            <Image source={{ uri: session?.avatar || "https://beforeigosolutions.com/wp-content/uploads/2021/12/dummy-profile-pic-300x300-1.png" }} style={styles.profileImage} />
                             <View>
-                                <Text style={[Typography.heading2, { fontSize: 22 }]}>{session?.name || 'User'}</Text>
+                                <Text
+                                    style={[Typography.heading2, { fontSize: 20 }]}
+                                >
+                                    {session?.name && session?.name.length > 25 ? (
+                                        `${session?.name.slice(0, 25)}...`
+                                    ) : session?.name}
+                                </Text>
                                 <Text style={[Typography.captionText, { fontSize: 12, marginTop: -6 }]}>
                                     Last app opened: {timesince(lastAppOpen)}
                                 </Text>
                             </View>
                         </View>
                     </Link>
-                    <Text style={Typography.heading3}>🔥 {session?.currentStreak}</Text>
+                    <Text style={[Typography.heading3, { marginLeft: 'auto' }]}>🔥 {session?.currentStreak}</Text>
                 </View>
 
                 <View

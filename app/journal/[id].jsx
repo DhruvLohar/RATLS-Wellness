@@ -81,7 +81,6 @@ export default function JournalEditor() {
                 method: 'post',
                 data: data
             }, true);
-            console.log("image", res, journal)
 
             return res?.image;
         } else { alert('Please try again later') }

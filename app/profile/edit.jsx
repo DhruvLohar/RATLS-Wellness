@@ -28,7 +28,7 @@ function Info({ title, children }) {
 }
 
 const schema = yup.object().shape({
-    name: yup.string().required('Name is required'),
+    name: yup.string().required('Name is required').max(50),
     email: yup.string().required('Email is required').email('Please enter a valid email.'),
     gender: yup.string().required('Gender is required'),
     age: yup
@@ -38,7 +38,7 @@ const schema = yup.object().shape({
     meditationExperience: yup
         .number()
         .required('Meditation Experience is required.')
-        .min(3).max(200),
+        .min(0).max(200),
 });
 
 export default function EditProfile() {

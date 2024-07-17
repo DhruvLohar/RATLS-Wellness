@@ -11,7 +11,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatars } from "../../services/constants";
 import { axiosRequest } from "../../hooks/api";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,7 +37,7 @@ const schema = yup.object().shape({
     meditationExperience: yup
         .number("This field should be an integer")
         .required('Meditation Experience is required.')
-        .min(3).max(200),
+        .min(0).max(200),
 });
 
 export default function createProfile() {
@@ -81,7 +81,7 @@ export default function createProfile() {
 
         if (res.success) {
             refreshUser();
-            router.replace('/');
+            router.replace('/(tabs)/home');
         } else {
             alert("Something went wrong")
         }
