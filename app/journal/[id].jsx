@@ -56,9 +56,9 @@ export default function JournalEditor() {
             richText.current?.setContentHTML(res?.journal?.contentHTML);
         } catch (error) {
             console.error("Error fetching journal:", error);
-        } finally {
-            setIsLoading(false);
         }
+
+        setIsLoading(false);
     }
 
     async function uploadJournalImage(pickerResult) {

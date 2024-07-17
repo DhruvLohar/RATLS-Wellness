@@ -112,10 +112,10 @@ export default function Tracker() {
                     <View style={[styles.box, { backgroundColor: '#919AFF' }]}>
                         <Text style={[Typography.heading3, { color: Colors.light }]}>Water Tracker</Text>
                         <Text style={[Typography.captionText, { color: Colors.light, marginTop: -5 }]}>
-                            TAP TO MARK 
+                            TAP TO MARK
                         </Text>
 
-                        <Pressable 
+                        <Pressable
                             onPress={handleWaterClick}
                             style={[
                                 styles.cardBtn,
@@ -130,22 +130,25 @@ export default function Tracker() {
                 </View>
 
                 <View style={{ width: '100%', marginVertical: 15 }}>
-                    <Text style={[Typography.heading3]}>Sleep duration</Text>
+                    <Text style={[Typography.heading3]}>Sleep Tracker</Text>
                     <Text style={[Typography.bodyText, {
                         marginBottom: 15,
                         fontSize: 15,
                         color: Colors.muted
-                    }]}>Your Sleep Duration for this week</Text>
+                    }]}>Your Sleep Duration for this week in hours.</Text>
 
                     <LineChart
                         areaChart
                         curved
                         hideDataPoints
                         data={[
-                            { value: 15 }, { value: 28 },
-                            { value: 18 }, { value: 30 },
-                            { value: 5 }, { value: 48 },
-                            { value: 35 }, { value: 43 }
+                            { value: 8, label: 'Mon' },
+                            { value: 16, label: 'Tue' },
+                            { value: 8, label: 'Wed' },
+                            { value: 13, label: 'Thr' },
+                            { value: 9, label: 'Fri' },
+                            { value: 7.5, label: 'Sat' },
+                            { value: 6, label: 'Sun' },
                         ]}
                         spacing={68}
                         color={Colors.primary}
@@ -154,17 +157,6 @@ export default function Tracker() {
                         yAxisThickness={0}
                         xAxisThickness={0}
                         noOfSections={6}
-                        maxValue={50}
-                        pointerConfig={{
-                            pointerStripUptoDataPoint: true,
-                            pointerStripColor: 'white',
-                            pointerStripWidth: 2,
-                            strokeDashArray: [2, 5],
-                            pointerColor: 'white',
-                            radius: 4,
-                            pointerLabelWidth: 100,
-                            pointerLabelHeight: 120,
-                        }}
                     />
                 </View>
             </ScrollView>

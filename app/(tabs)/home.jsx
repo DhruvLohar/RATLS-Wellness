@@ -1,5 +1,4 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
-import messaging from '@react-native-firebase/messaging';
 
 import quoteBg from "../../assets/images/quoteBg.png"
 import { useSession } from '../../hooks/auth';
@@ -7,7 +6,6 @@ import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
 
-import LineChartView from "../../components/LineChartView";
 import PieChartView from "../../components/PieChartView";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +13,7 @@ import { axiosRequest } from "../../hooks/api";
 import { isFirstLoginOfDay, getActivities } from "../../hooks/activites";
 import { Moods, timesince } from "../../services/constants";
 import LottieView from "lottie-react-native";
+import BarChartView from "../../components/BarChartView";
 
 export default function Home() {
 
@@ -98,19 +97,13 @@ export default function Home() {
     useEffect(() => {
         updateStreak();
 
-        // getToken()
-        //     .then(res => console.log(res))
-        //     .catch(err => console.log(err))
+        (async () => {
+            const firstLogin = await isFirstLoginOfDay();
+            const activites = await getActivities();
+            setAppOpen(activites?.lastAppOpen);
 
-        // (async () => {
-        //     const firstLogin = await isFirstLoginOfDay();
-        //     const activites = await getActivities();
-        //     setAppOpen(activites?.lastAppOpen);
-
-        //     if (firstLogin) {
-        //         console.log(firstLogin)
-        //     }
-        // })();
+            console.log("first hai ?", firstLogin)
+        })();
     }, [])
 
     useEffect(() => {
@@ -205,10 +198,15 @@ export default function Home() {
                     ))}
                 </View>
 
-                <LineChartView
+                {/* <LineChartView
                     title={"Time Spent in Last Week"}
                     desc={"Lorem ipsum doler sit amet."}
                     data={data}
+                /> */}
+
+                <BarChartView 
+                    title={"Time Spent in Last Week"}
+                    desc={"A bar chart showing time you spend over the last week on the app"}
                 />
 
                 <PieChartView

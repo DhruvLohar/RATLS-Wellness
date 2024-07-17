@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { SplashScreen, Stack } from "expo-router";
-import * as TaskManager from 'expo-task-manager';
-import * as BackgroundFetch from 'expo-background-fetch';
 import * as Notifications from 'expo-notifications';
 import messaging from '@react-native-firebase/messaging';
 
@@ -19,7 +17,7 @@ import Header from "../components/Header";
 import { StyleSheet } from "react-native";
 import Colors from "../theme/colors";
 import AnimatedSplashScreen from "../components/AnimatedSplashScreen";
-import { schedulePushNotification } from "../services/notification";
+import { registerForPushNotificationsAsync, schedulePushNotification } from "../services/notification";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,29 +27,6 @@ Notifications.setNotificationHandler({
         shouldPlaySound: true,
         shouldSetBadge: false,
     }),
-});
-
-const BACKGROUND_FETCH_TASK = 'water-reminder';
-
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async ({ data, error }) => {
-    console.log("\n\nCHALA BG TASK\n\n")
-
-    if (error) {
-        console.log("ERROR AAYA", error)
-    }
-    await schedulePushNotification({
-        title: "This works",
-        body: `GETTING NOTIFICATION AT ${new Date().toLocaleTimeString()}`,
-    })
-
-    // Be sure to return the successful result type!
-    return BackgroundFetch.BackgroundFetchResult.NewData;
-});
-
-BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 5 * 60,
-    stopOnTerminate: false,
-    startOnBoot: true,
 });
 
 export default function Layout() {
@@ -68,6 +43,10 @@ export default function Layout() {
     });
 
     useEffect(() => {
+
+        (async () => {
+            await registerForPushNotificationsAsync()
+        })();
 
         messaging().setBackgroundMessageHandler(async remoteMessage => {
             await schedulePushNotification({
