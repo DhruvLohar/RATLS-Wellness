@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Slider from "@react-native-community/slider";
-import { PauseCircle, PlayCircle } from "iconsax-react-native";
+import { PauseCircle, PlayCircle, RepeateMusic, RepeateOne } from "iconsax-react-native";
 import { Audio } from 'expo-av';
 
 import Colors from "../../theme/colors";
@@ -16,6 +16,7 @@ export default function MusicScreen() {
 
     const { id } = useLocalSearchParams();
     const [playbackInstance, setPlaybackInstance] = useState(null);
+    const [isOnLoop, setIsLoop] = useState(true)
     const [isPlaying, setIsPlaying] = useState(false);
     const [playbackStatus, setPlaybackStatus] = useState(null);
     const [sliderValue, setSliderValue] = useState(0);
@@ -57,6 +58,24 @@ export default function MusicScreen() {
         return () => stopCountdown();
     }, [isPlaying, playbackStatus]);
 
+    function toggleLoop() {
+        if (!isOnLoop) {
+            setIsLoop(true)
+            ToastAndroid.showWithGravity(
+                "Playing on loop",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
+        } else {
+            setIsLoop(false)
+            ToastAndroid.showWithGravity(
+                "Playing only once",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
+        }
+    }
+
     const startCountdown = () => {
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
@@ -80,28 +99,41 @@ export default function MusicScreen() {
         if (playbackInstance) {
             await playbackInstance.unloadAsync();
         }
-        
+
         try {
             const { sound: newPlaybackInstance } = await Audio.Sound.createAsync(
                 { uri: sound.audioUrl },
                 { shouldPlay: true },
                 onPlaybackStatusUpdate
             );
-            
+
             setPlaybackInstance(newPlaybackInstance);
             setIsPlaying(true);
         } catch (err) { alert("Cannot play this sound at the moment") }
     };
 
-    const onPlaybackStatusUpdate = (status) => {
+    const onPlaybackStatusUpdate = async (status) => {
         if (status.isLoaded) {
             setPlaybackStatus(status);
             if (!isSliding) {
                 setSliderValue(status.positionMillis);
             }
             if (status.didJustFinish) {
-                handlePause();
+                
+                if (isOnLoop) {
+                    await playbackInstance.replayAsync();
+                } else {
+                    handlePause();
+                }
             }
+        }
+    };
+
+    const handlePause = async () => {
+        if (playbackInstance) {
+            await playbackInstance.pauseAsync();
+            setIsPlaying(false);
+            setSliderValue(0);
         }
     };
 
@@ -165,6 +197,21 @@ export default function MusicScreen() {
                         <Text style={[Typography.heading3, { color: Colors.light }]}>{sound?.title}</Text>
                         <Text style={[Typography.captionText, { marginTop: -4 }]}>Soundscape</Text>
                     </View>
+
+                    <Pressable onPress={toggleLoop} style={{ marginLeft: "auto", marginRight: 15 }}>
+                        {isOnLoop ? (
+                            <RepeateOne
+                                color={Colors.light}
+                                size={32}
+                            />
+                        ) : (
+                            <RepeateMusic
+                                color={Colors.light}
+                                size={32}
+                            />
+                        )}
+                    </Pressable>
+
                     <Pressable onPress={handlePlayPause}>
                         {isPlaying ? (
                             <PauseCircle

@@ -10,7 +10,7 @@ const Colors = {
 
     inputBG: '#F7F5F5',
 
-    readOnlyJournals: '#FF964F',
+    readOnlyJournals: '#FF5733',
 }
 
 export default Colors;

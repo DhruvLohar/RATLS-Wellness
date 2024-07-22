@@ -28,8 +28,8 @@ export default function Meditate() {
                 contentContainerStyle={[Layout.flexRowCenter, { marginTop: 10 }]}
             >
                 {InbuiltSounds.map((sound, i) => (
-                    <Pressable 
-                        key={i} 
+                    <Pressable
+                        key={i}
                         style={{ position: 'relative', marginRight: 10 }}
                         onPress={() => router.push(`/sound/${sound.id}`)}
                     >
@@ -60,19 +60,20 @@ export default function Meditate() {
             <YoutubePlayer
                 width={"100%"}
                 height={250}
-                videoId={"WltkvVB_lfM"}
+                videoId={"1xRX1MuoImw"}
             />
+
             <YoutubePlayer
                 width={"100%"}
                 height={250}
-                videoId={"yPK7ISPEu3M"}
+                videoId={"jb9B39zrzEo"}
             />
 
-            {/* <Text style={[Typography.heading3, { marginTop: 20 }]}>Recomended Spotify Playlists</Text>
-            <Text style={[Typography.captionText, {
-                marginBottom: 15,
-                marginTop: -4,
-            }]}>These are some recomended</Text> */}
+            <YoutubePlayer
+                width={"100%"}
+                height={250}
+                videoId={"xE_pGjpycac"}
+            />
 
         </ScrollView>
     );

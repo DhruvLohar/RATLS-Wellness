@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, Image, Pressable, ToastAndroid } from 'react-native';
-import * as Notifications from 'expo-notifications';
+import quoteBg from "../../assets/images/quoteBg.png"
 import { LineChart } from "react-native-gifted-charts";
 
 import Layout from "../../theme/layout"
@@ -10,7 +10,6 @@ import Colors from '../../theme/colors';
 import Typography from '../../theme/typography';
 import { useRouter } from 'expo-router';
 
-import { schedulePushNotification } from '../../services/notification';
 import { getActivities, updateActivity } from '../../hooks/activites';
 import LottieView from 'lottie-react-native';
 
@@ -26,42 +25,48 @@ export default function Tracker() {
     }
 
     async function handleWaterClick() {
-        // await Notifications.scheduleNotificationAsync({
-        //     content: {
-        //         title: 'Hi Dhruv, its water time!',
-        //         body: 'Open your app and click on the water card to mark that you drank your water.',
-        //     },
-        //     trigger: { seconds: 1 },
-        // });
         const now = new Date();
         const activites = await getActivities();
 
-        const oneHourInMilliseconds = 3600 * 1000;
-        const newWaterIntake = (activites?.waterIntake || 0) + 300;
+        // const oneHourInMilliseconds = 3600 * 1000;
+        const newWaterIntake = (activites?.waterIntake || 0) + 1;
 
-        const lastWaterIntake = new Date(activites?.lastWaterIntake);
-        const isOneHourGap = now - lastWaterIntake >= oneHourInMilliseconds;
+        // const lastWaterIntake = new Date(activites?.lastWaterIntake);
 
-        if (!activites?.lastWaterIntake || isOneHourGap) {
-            if (newWaterIntake >= 3000) {
-                ToastAndroid.showWithGravity(
-                    "Goal achieved: You've reached your water intake goal!",
-                    ToastAndroid.SHORT,
-                    ToastAndroid.CENTER,
-                );
-            } else {
-                await updateActivity('lastWaterIntake', now.toISOString());
-                await updateActivity('waterIntake', newWaterIntake);
-                setWaterIntake(newWaterIntake);
-                triggerConfetti();
-            }
-        } else {
+        if (newWaterIntake >= 13) {
             ToastAndroid.showWithGravity(
-                "You need to wait at least 1 hour before recording another water intake.",
+                "Goal achieved: You've reached your water intake goal!",
                 ToastAndroid.SHORT,
                 ToastAndroid.CENTER,
             );
+        } else {
+            await updateActivity('lastWaterIntake', now.toISOString());
+            await updateActivity('waterIntake', newWaterIntake);
+            setWaterIntake(newWaterIntake);
+            triggerConfetti();
         }
+
+        // const isOneHourGap = now - lastWaterIntake >= oneHourInMilliseconds;
+        // if (!activites?.lastWaterIntake || isOneHourGap) {
+        //     ToastAndroid.showWithGravity(
+        //         "Goal achieved: You've reached your water intake goal!",
+        //         ToastAndroid.SHORT,
+        //         ToastAndroid.CENTER,
+        //     );
+        //     if (newWaterIntake >= 3000) {
+        //     } else {
+        //         await updateActivity('lastWaterIntake', now.toISOString());
+        //         await updateActivity('waterIntake', newWaterIntake);
+        //         setWaterIntake(newWaterIntake);
+        //         triggerConfetti();
+        //     }
+        // } else {
+        //     ToastAndroid.showWithGravity(
+        //         "You need to wait at least 1 hour before recording another water intake.",
+        //         ToastAndroid.SHORT,
+        //         ToastAndroid.CENTER,
+        //     );
+        // }
     }
 
     useEffect(() => {
@@ -79,7 +84,7 @@ export default function Tracker() {
 
                 <View style={styles.waterContainer}>
                     <CircularProgress
-                        progress={Math.round((waterIntake / 3000) * 100)}
+                        progress={Math.round((waterIntake / 13) * 100)}
                         outerCircleColor={Colors.inputBG}
                         progressCircleColor={Colors.primary}
                         labelStyle={{
@@ -89,7 +94,7 @@ export default function Tracker() {
                         strokeWidth={5}
                     />
                     <Text style={[Typography.captionText, { marginTop: 10 }]}>Completed</Text>
-                    <Text style={Typography.heading3}>{waterIntake} / 3000 ml</Text>
+                    <Text style={Typography.heading3}>{waterIntake} / 13 glasses</Text>
                     <Image source={waterBoy} style={styles.waterImage} />
                 </View>
 
@@ -128,6 +133,24 @@ export default function Tracker() {
                         </Pressable>
                     </View>
                 </View>
+
+                <Pressable
+                    onPress={() => router.push("/(tabs)/meditate")}
+                    style={[styles.quoteContainer, Layout.cardView, { padding: 0, borderWidth: 0 }]}
+                >
+                    <Image
+                        source={quoteBg}
+                        style={styles.quoteImg}
+                    />
+                    <Text
+                        style={[
+                            Typography.heading2,
+                            { fontSize: 20, textAlign: 'center', width: '90%' }
+                        ]}
+                    >
+                        Can't Sleep ? Get Help 😊 
+                    </Text>
+                </Pressable>
 
                 <View style={{ width: '100%', marginVertical: 15 }}>
                     <Text style={[Typography.heading3]}>Sleep Tracker</Text>
@@ -197,6 +220,22 @@ const styles = StyleSheet.create({
         right: 4,
         bottom: 0,
         zIndex: 99
+    },
+
+    quoteContainer: {
+        width: '100%',
+        height: 140,
+        marginVertical: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    quoteImg: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 20,
+        position: 'absolute',
+        top: 0,
+        left: 0
     },
 
     row: {
