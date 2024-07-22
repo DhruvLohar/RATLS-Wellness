@@ -23,11 +23,18 @@ import { useEffect, useState } from "react";
 
 const schema = yup.object().shape({
     email: yup.string().required('Email is required').email('Please enter a valid email.'),
-    password: yup
-        .string()
-        .required('Password is required.')
-        .min(3, 'Password must contain at least 3 characters.'),
+    password: yup.string()
+        .matches(/^(?=.*[A-Z])/, "Password must start with a capital letter") // Start with a capital letter
+        .matches(/^(?=.*[0-9])/, "Password must contain at least one number") // At least one number
+        .matches(/^(?=.*[!@#$%^&*(),.?":{}|<>])/, "Password must contain at least one special character") // At least one special character
+        .min(8, "Password must be at least 8 characters long") // At least 8 characters
+        .required('Password is required')
 });
+
+GoogleSignin.configure({
+    webClientId: '261729220393-2hrk0o6q6tubgl71sm0n04fef3n5v4sq.apps.googleusercontent.com',
+    offlineAccess: true
+})
 
 export default function Login() {
 
@@ -46,13 +53,6 @@ export default function Login() {
             password: '',
         },
     });
-
-    useEffect(() => {
-        GoogleSignin.configure({
-            webClientId: '261729220393-2hrk0o6q6tubgl71sm0n04fef3n5v4sq.apps.googleusercontent.com',
-            offlineAccess: true
-        })
-    }, [])
 
     async function handleLogin(values) {
         setLoading(prev => !prev)
@@ -85,6 +85,8 @@ export default function Login() {
             setLoading(prev => !prev)
             const result = await signUp(data);
             setLoading(prev => !prev)
+
+            console.log(data)
 
             if (result.success) {
                 router.replace(result?.profileCompleted ? '/(tabs)/home' : '/profile/create');
@@ -157,6 +159,7 @@ export default function Login() {
                 name="password"
             />
             {errors.password && <Text style={Typography.errorText}>{errors.password.message}</Text>}
+            <TextButton title={"Forgot Password?"} onPress={() => router.push('/auth/forgotPassword')} />
 
             <Button
                 title="Sign In"

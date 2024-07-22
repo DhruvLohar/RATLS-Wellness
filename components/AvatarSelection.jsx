@@ -80,7 +80,9 @@ export default function AvatarSelection({
                 />
             </View>
             <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'space-between' }]}>
-                <Button title={"Upload Image"} style={{ width: "56%" }} onPress={handleUploadImage} />
+                {!image?.uri && avatar !== -1 && (
+                    <Button title={"Upload Image"} style={{ width: "56%" }} onPress={handleUploadImage} />
+                )}
                 <Button title={"Remove"} type="outline" style={{ width: "42%" }} onPress={removeUploadImage} />
             </View>
         </>
