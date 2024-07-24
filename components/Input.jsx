@@ -6,7 +6,8 @@ import Colors from '../theme/colors'
 export default function Input({
     placeHolder, iconNameSuffix, type,
     IconPrefix, isTextarea,
-    handleFormik
+    handleFormik,
+    inpStyles
 }) {
 
     const { name, onChange, value } = handleFormik;
@@ -26,7 +27,8 @@ export default function Input({
                 style={[
                     styles.input,
                     isTextarea && styles.textarea,
-                    { paddingLeft: IconPrefix ? 55 : 20, paddingRight: iconNameSuffix ? 50 : 10 }
+                    { paddingLeft: IconPrefix ? 55 : 20, paddingRight: iconNameSuffix ? 50 : 10 },
+                    inpStyles
                 ]}
                 placeholder={placeHolder}
                 placeholderTextColor={Colors.muted}

@@ -14,6 +14,8 @@ import { isFirstLoginOfDay, getActivities } from "../../hooks/activites";
 import { Moods, timesince } from "../../services/constants";
 import LottieView from "lottie-react-native";
 import BarChartView from "../../components/BarChartView";
+import SetGoals from "../../components/home/SetGoals";
+import MoodSelector from "../../components/home/MoodSelector";
 
 export default function Home() {
 
@@ -21,6 +23,7 @@ export default function Home() {
     const { session, refreshUser } = useSession();
 
     const [todaysMood, setTodaysMood] = useState(null);
+    const [editMood, setEditMood] = useState(false)
     const [lastAppOpen, setAppOpen] = useState("")
 
     const confettiRef = useRef(null);
@@ -40,13 +43,6 @@ export default function Home() {
         ]
     ]
 
-    const data = [
-        { value: 15 }, { value: 28 },
-        { value: 18 }, { value: 30 },
-        { value: 5 }, { value: 48 },
-        { value: 35 }, { value: 43 }
-    ];
-
     async function updateStreak(lastLogin) {
         const res = await axiosRequest(`users/${session?._id}/updateStreaks/`, {
             method: 'put',
@@ -59,40 +55,22 @@ export default function Home() {
     }
 
     async function handleMoodSelect(mood) {
-        if (!todaysMood) {
-            const res = await axiosRequest(`users/${session?._id}/updateMoodMap/`, {
-                method: 'put',
-                data: { mood }
-            }, false);
+        const res = await axiosRequest(`users/${session?._id}/updateMoodMap/`, {
+            method: 'put',
+            data: { mood }
+        }, false);
 
-            let message = res?.success ? "Your mood was added for the day!" : "You can update your mood only once."
+        if (res.success) {
+            setEditMood(prev => !prev)
             ToastAndroid.showWithGravity(
-                message,
-                ToastAndroid.SHORT,
+                "Your mood was added for the day!",
+                ToastAndroid.LONG,
                 ToastAndroid.CENTER,
             );
-
-            if (res.success) {
-                refreshUser();
-                triggerConfetti();
-            }
+            refreshUser();
+            triggerConfetti();
         }
     }
-
-    const EmojiItem = ({ mood, index }) => (
-        <Pressable
-            key={index}
-            android_ripple={{
-                color: Colors.muted,
-                borderless: true
-            }}
-            style={{ alignItems: 'center', marginRight: 15 }}
-            onPress={() => handleMoodSelect(mood.name)}
-        >
-            <Text style={{ fontSize: 46, marginBottom: 5 }}>{mood.emoji}</Text>
-            <Text style={[Typography.bodyText, { color: Colors.muted, fontSize: 12 }]}>{mood.name}</Text>
-        </Pressable>
-    )
 
     useEffect(() => {
         updateStreak();
@@ -116,7 +94,7 @@ export default function Home() {
                 }
             }
         })();
-    }, [session])
+    }, [session, editMood])
 
     return (
         <>
@@ -160,27 +138,16 @@ export default function Home() {
                     </Text>
                 </View>
 
-                <Text style={[Typography.heading3]}>
-                    {todaysMood ? "Your mood for today is" : "How are you feeling today ?"}
-                </Text>
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={[
-                        Layout.flexRowCenter,
-                        { marginVertical: 10 }
-                    ]}
-                >
-                    {todaysMood
-                        ? (<EmojiItem mood={todaysMood} index={1} />)
-                        : (
-                            <>
-                                {Moods.map((mood, i) => <EmojiItem mood={mood} key={i} />)}
-                            </>
-                        )
-                    }
+                {/* Mood Selector View */}
+                <MoodSelector 
+                    todaysMood={todaysMood}
+                    handleMoodSelect={handleMoodSelect}
+                    editMood={editMood}
+                    setEditMood={setEditMood}
+                />
 
-                </ScrollView>
+                {/* SETTING USERS GOAL TO BE ON APP */}
+                <SetGoals />
 
                 <View style={styles.navCardBase}>
                     {navCards.map((group, i) => (
@@ -198,13 +165,7 @@ export default function Home() {
                     ))}
                 </View>
 
-                {/* <LineChartView
-                    title={"Time Spent in Last Week"}
-                    desc={"Lorem ipsum doler sit amet."}
-                    data={data}
-                /> */}
-
-                <BarChartView 
+                <BarChartView
                     title={"Time Spent in Last Week"}
                     desc={"A bar chart showing time you spend over the last week on the app"}
                 />

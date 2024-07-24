@@ -33,7 +33,7 @@ export default function Tracker() {
 
         // const lastWaterIntake = new Date(activites?.lastWaterIntake);
 
-        if (newWaterIntake >= 13) {
+        if (newWaterIntake > 13) {
             ToastAndroid.showWithGravity(
                 "Goal achieved: You've reached your water intake goal!",
                 ToastAndroid.SHORT,
