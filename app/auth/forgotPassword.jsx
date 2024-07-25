@@ -41,6 +41,7 @@ export default function Login() {
         control,
         handleSubmit,
         formState: { errors },
+        getValues
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
@@ -80,8 +81,10 @@ export default function Login() {
 
     async function handleVerifyOTP(values) {
         setLoading(true);
+        const form = getValues()
         const res = await postToAPI('users/verifyOTP/', {
-            enteredOTP: values?.otp
+            enteredOTP: values?.otp,
+            email: form.email
         });
         setLoading(false);
 
@@ -98,7 +101,11 @@ export default function Login() {
 
     async function handleResetPassword(values) {
         setLoading(true);
-        const res = await postToAPI('users/resetPassword/', values);
+        const form = getValues()
+        const res = await postToAPI('users/resetPassword/', {
+            ...values,
+            email: form.email
+        });
         setLoading(false);
 
         if (res.success) {

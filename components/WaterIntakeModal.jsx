@@ -7,6 +7,13 @@ import Typography from '../theme/typography';
 import Button, { TextButton } from './Button';
 import { useSession } from '../hooks/auth';
 import Input from './Input';
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+const schema = yup.object().shape({
+    glasses: yup.number().required("Enter Number of Glasses").transform(value => (isNaN(value) ? undefined : value)).min(0).max(28).nullable(),
+});
 
 export default function WaterIntakeModal({
     modalVisible, setModalVisible,
@@ -15,7 +22,17 @@ export default function WaterIntakeModal({
 
     const { session } = useSession();
 
-    const [quantity, setQuantity] = useState("")
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+        setValue
+    } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            glasses: null
+        },
+    });
 
     function getWaterRecommendation() {
         let glasses = 0;
@@ -56,47 +73,44 @@ export default function WaterIntakeModal({
             >
                 <View style={[styles.centeredView, { backgroundColor: "#1b1b1b50" }]}>
                     <View style={styles.modalView}>
-                        <View style={[Layout.flexRowCenter, { width: '100%' }]}>
+                        <View style={[Layout.flexRowCenter, { width: '100%', marginBottom: 30 }]}>
                             <Text style={[Typography.heading2, { marginRight: 'auto', lineHeight: 30, fontSize: 18 }]}>
                                 Set your water goal
                             </Text>
                             <Add rotation={45} color={Colors.dark} size={28} onPress={() => setModalVisible(!modalVisible)} />
                         </View>
 
-                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ flex: 1 }}>
+                        <Controller
+                            control={control}
+                            rules={{
+                                required: true,
+                            }}
+                            render={({ field: { onChange, value } }) => (
                                 <Input
-                                    placeHolder="Quantity"
-                                    type="numeric"
-                                    handleFormik={{ name: 'quantity', onChange: setQuantity, value: quantity }}
+                                    placeHolder="Number of Glasses"
+                                    type='numeric'
+                                    handleFormik={{ name: 'glasses', onChange, value }}
                                 />
-                            </View>
-                            <Text style={[Typography.bodyText, { flex: 0.3, marginLeft: 20 }]}>
-                                Glasses
-                            </Text>
-                        </View>
-
-                        <Text style={Typography.captionText}>1 Glass of water = 8 Ounces or 240 ML</Text>
+                            )}
+                            name="glasses"
+                        />
+                        {errors.glasses && <Text style={Typography.errorText}>{errors.glasses.message}</Text>}
 
                         <Button
                             title={"Set Goal"}
-                            onPress={() => handleGoalUpdate(quantity)}
+                            onPress={handleSubmit(handleGoalUpdate)}
                         />
 
-                        <Pressable
-                            onPress={() => {
-                                setQuantity(recommendedGlasses.toString())
-                            }}
+                        <Text style={Typography.captionText}>1 Glass of water = 8 Ounces or 240 ML</Text>
+
+                        <Text
+                            style={[
+                                Typography.heading3,
+                                styles.challengeText
+                            ]}
                         >
-                            <Text
-                                style={[
-                                    Typography.heading3,
-                                    styles.challengeText
-                                ]}
-                            >
-                                Average {session?.gender} of age {session?.age} drinks about {recommendedGlasses} glasses of water per day. Tap here to set as your goal.
-                            </Text>
-                        </Pressable>
+                            Average {session?.gender} of age {session?.age} drinks about {recommendedGlasses} glasses of water per day.
+                        </Text>
                     </View>
                 </View>
             </Modal>
@@ -125,7 +139,8 @@ const styles = StyleSheet.create({
 
     challengeText: {
         fontSize: 14, marginTop: 20,
-        color: Colors.muted
+        color: Colors.muted,
+        textAlign: 'center'
     },
 
     button: {

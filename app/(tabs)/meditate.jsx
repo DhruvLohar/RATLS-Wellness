@@ -66,7 +66,7 @@ export default function Meditate() {
 
             <View style={{ width: '100%' ,flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
                 <Text style={[Typography.heading3, {marginRight: 'auto'}]}>Featured Yoga Lessons</Text>
-                <Filter color={Colors.dark} size={20} />
+                <Filter color={Colors.muted} size={20} />
                 <TextButton
                     title={lowToHigh ? "Shortest First" : "Longest First"}
                     textStyle={{ color: Colors.muted }}

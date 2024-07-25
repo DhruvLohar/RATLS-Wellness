@@ -1,10 +1,8 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 
-import quoteBg from "../../assets/images/quoteBg.png"
 import { useSession } from '../../hooks/auth';
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
-import Quotes from "../../assets/quotes"
 import Typography from "../../theme/typography";
 
 import PieChartView from "../../components/PieChartView";
@@ -17,6 +15,7 @@ import LottieView from "lottie-react-native";
 import BarChartView from "../../components/BarChartView";
 import SetGoals from "../../components/home/SetGoals";
 import MoodSelector from "../../components/home/MoodSelector";
+import QuoteCarousel from "../../components/home/QuoteCarousel";
 
 export default function Home() {
 
@@ -28,8 +27,6 @@ export default function Home() {
     const [lastAppOpen, setAppOpen] = useState("")
 
     const confettiRef = useRef(null);
-
-    const quote = Quotes[Math.floor(Math.random() * Quotes.length)];
 
     function triggerConfetti() {
         confettiRef.current?.play(0);
@@ -65,16 +62,26 @@ export default function Home() {
             }, false);
     
             if (res.success) {
-                setEditMood(prev => !prev)
+                if (editMood) {
+                    setEditMood(false)
+                }
                 ToastAndroid.showWithGravity(
                     "Your mood was updated for the day!",
                     ToastAndroid.LONG,
                     ToastAndroid.CENTER,
                 );
+
                 let moodItem = Moods.find(item => item.name === mood);
-                setTodaysMood(moodItem)
+                setTodaysMood(moodItem);
+
                 refreshUser();
                 triggerConfetti();
+            } else {
+                ToastAndroid.showWithGravity(
+                    res.message || "Something went wrong",
+                    ToastAndroid.LONG,
+                    ToastAndroid.CENTER,
+                );
             }
         }
     }
@@ -127,22 +134,7 @@ export default function Home() {
                     <Text style={[Typography.heading3, { marginLeft: 'auto' }]}>🔥 {session?.currentStreak}</Text>
                 </View>
 
-                <View
-                    style={[styles.quoteContainer, Layout.cardView, { padding: 0, borderWidth: 0 }]}
-                >
-                    <Image
-                        source={quoteBg}
-                        style={styles.quoteImg}
-                    />
-                    <Text
-                        style={[
-                            Typography.heading2,
-                            { fontSize: 15, textAlign: 'center', width: '90%' }
-                        ]}
-                    >
-                        " {quote.quote} "
-                    </Text>
-                </View>
+                <QuoteCarousel />
 
                 {/* Mood Selector View */}
                 <MoodSelector 
@@ -205,22 +197,6 @@ const styles = StyleSheet.create({
         borderRadius: 120,
         marginRight: 10,
         position: 'relative'
-    },
-
-    quoteContainer: {
-        width: '100%',
-        height: 140,
-        marginVertical: 20,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    quoteImg: {
-        width: "100%",
-        height: "100%",
-        borderRadius: 20,
-        position: 'absolute',
-        top: 0,
-        left: 0
     },
 
     moodContainer: {

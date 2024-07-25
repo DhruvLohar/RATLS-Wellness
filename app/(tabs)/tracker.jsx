@@ -85,11 +85,11 @@ export default function Tracker() {
         }
     }
 
-    async function handleGoalUpdate(quantity) {
+    async function handleGoalUpdate(values) {
         const res = await axiosRequest('sessions/updateWaterIntake/', {
             method: 'put',
             data: {
-                value: quantity
+                value: values.glasses
             }
         }, false);
 
