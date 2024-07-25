@@ -7,7 +7,7 @@ import { Svg, Circle } from "react-native-svg";
 function CircularProgress(props) {
     // Destructuring props
     const {
-        size = 80,
+        size = 100,
         strokeWidth = (5 * size) / 100,
         progress = 0,
         showLabel = true,

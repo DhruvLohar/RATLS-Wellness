@@ -67,7 +67,7 @@ export async function isFirstLoginOfDay() {
         const lastAppOpen = new Date(activities.lastAppOpen);
 
         if (!activities.lastAppOpen) {
-            updateActivity('lastAppOpen', now.toISOString());
+            await updateActivity('lastAppOpen', now.toISOString());
             return true;
         }
 

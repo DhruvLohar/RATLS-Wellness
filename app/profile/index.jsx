@@ -23,6 +23,17 @@ export default function Profile() {
     const router = useRouter()
     const { signOut, session } = useSession()
 
+    function formatMeditationExperience(months) {
+        if (months < 12) {
+            return `${months} month${months !== 1 ? 's' : ''}`;
+        } else {
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            return `${years} year${years !== 1 ? 's' : ''}${remainingMonths > 0 ? ` ${remainingMonths} month${remainingMonths !== 1 ? 's' : ''}` : ''}`;
+        }
+    }
+
+
     function handleLogout() {
         signOut();
         router.replace('/auth/login');
@@ -54,7 +65,7 @@ export default function Profile() {
             <Info title="Email" value={session?.email} />
             <Info title="Gender" value={session?.gender} />
             <Info title="Age" value={`${session?.age} years`} />
-            <Info title="Meditation Experience" value={`${session?.meditationExperience} months`} />
+            <Info title="Meditation Experience" value={formatMeditationExperience(session?.meditationExperience)} />
 
             <Button
                 title={"Edit Profile"}
@@ -66,6 +77,7 @@ export default function Profile() {
                 title={"Logout"}
                 type="outline"
                 PrefixIcon={Logout}
+                style={{ marginBottom: 50 }}
                 onPress={handleLogout}
             />
         </ScrollView>

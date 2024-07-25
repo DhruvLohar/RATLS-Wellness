@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import YoutubePlayer from "react-native-youtube-iframe";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,10 +9,23 @@ import Colors from "../../theme/colors";
 import Typography from "../../theme/typography";
 import { InbuiltSounds } from '../../services/constants';
 import MyMedia from '../../components/MyMedia';
+import { TextButton } from '../../components/Button';
+import { Filter } from 'iconsax-react-native';
 
 export default function Meditate() {
 
     const router = useRouter()
+    const [lowToHigh, setLowToHigh] = useState(true)
+    const [youtubeUrls, setYoutubeUrls] = useState([
+        "1xRX1MuoImw",
+        "jb9B39zrzEo",
+        "xE_pGjpycac"
+    ]);
+
+    function toggleYTUrls() {
+        setYoutubeUrls(prev => prev.reverse())
+        setLowToHigh(prev => !prev)
+    }
 
     return (
         <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
@@ -51,29 +64,24 @@ export default function Meditate() {
 
             <MyMedia />
 
-            <Text style={[Typography.heading3, { marginTop: 20 }]}>Featured Yoga Lessons</Text>
-            <Text style={[Typography.captionText, {
-                marginBottom: 15,
-                marginTop: -4,
-            }]}>Checkout some latest Yoga lessons from Youtube!</Text>
+            <View style={{ width: '100%' ,flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+                <Text style={[Typography.heading3, {marginRight: 'auto'}]}>Featured Yoga Lessons</Text>
+                <Filter color={Colors.dark} size={20} />
+                <TextButton
+                    title={lowToHigh ? "Shortest First" : "Longest First"}
+                    textStyle={{ color: Colors.muted }}
+                    onPress={toggleYTUrls}
+                />
+            </View>
 
-            <YoutubePlayer
-                width={"100%"}
-                height={250}
-                videoId={"1xRX1MuoImw"}
-            />
-
-            <YoutubePlayer
-                width={"100%"}
-                height={250}
-                videoId={"jb9B39zrzEo"}
-            />
-
-            <YoutubePlayer
-                width={"100%"}
-                height={250}
-                videoId={"xE_pGjpycac"}
-            />
+            {youtubeUrls.map(urls => (
+                <YoutubePlayer
+                    key={urls}
+                    width={"100%"}
+                    height={250}
+                    videoId={urls}
+                />
+            ))}
 
         </ScrollView>
     );

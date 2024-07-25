@@ -4,13 +4,14 @@ import quoteBg from "../../assets/images/quoteBg.png"
 import { useSession } from '../../hooks/auth';
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
+import Quotes from "../../assets/quotes"
 import Typography from "../../theme/typography";
 
 import PieChartView from "../../components/PieChartView";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { axiosRequest } from "../../hooks/api";
-import { isFirstLoginOfDay, getActivities } from "../../hooks/activites";
+import { isFirstLoginOfDay, getActivities, updateActivity } from "../../hooks/activites";
 import { Moods, timesince } from "../../services/constants";
 import LottieView from "lottie-react-native";
 import BarChartView from "../../components/BarChartView";
@@ -27,6 +28,8 @@ export default function Home() {
     const [lastAppOpen, setAppOpen] = useState("")
 
     const confettiRef = useRef(null);
+
+    const quote = Quotes[Math.floor(Math.random() * Quotes.length)];
 
     function triggerConfetti() {
         confettiRef.current?.play(0);
@@ -55,20 +58,24 @@ export default function Home() {
     }
 
     async function handleMoodSelect(mood) {
-        const res = await axiosRequest(`users/${session?._id}/updateMoodMap/`, {
-            method: 'put',
-            data: { mood }
-        }, false);
-
-        if (res.success) {
-            setEditMood(prev => !prev)
-            ToastAndroid.showWithGravity(
-                "Your mood was added for the day!",
-                ToastAndroid.LONG,
-                ToastAndroid.CENTER,
-            );
-            refreshUser();
-            triggerConfetti();
+        if (editMood || !todaysMood) {
+            const res = await axiosRequest(`users/${session?._id}/updateMoodMap/`, {
+                method: 'put',
+                data: { mood }
+            }, false);
+    
+            if (res.success) {
+                setEditMood(prev => !prev)
+                ToastAndroid.showWithGravity(
+                    "Your mood was updated for the day!",
+                    ToastAndroid.LONG,
+                    ToastAndroid.CENTER,
+                );
+                let moodItem = Moods.find(item => item.name === mood);
+                setTodaysMood(moodItem)
+                refreshUser();
+                triggerConfetti();
+            }
         }
     }
 
@@ -99,7 +106,6 @@ export default function Home() {
     return (
         <>
             <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
-
                 <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'space-between' }]}>
                     <Link href={"/profile"}>
                         <View style={[Layout.flexRowCenter]}>
@@ -131,10 +137,10 @@ export default function Home() {
                     <Text
                         style={[
                             Typography.heading2,
-                            { fontSize: 20, textAlign: 'center', width: '90%' }
+                            { fontSize: 15, textAlign: 'center', width: '90%' }
                         ]}
                     >
-                        " The future belongs to those who believe in the beauty of their dreams. "
+                        " {quote.quote} "
                     </Text>
                 </View>
 

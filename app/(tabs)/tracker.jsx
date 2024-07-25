@@ -4,7 +4,6 @@ import quoteBg from "../../assets/images/quoteBg.png"
 import { LineChart } from "react-native-gifted-charts";
 
 import Layout from "../../theme/layout"
-import waterBoy from "../../assets/images/water-boy.png"
 import CircularProgress from '../../components/CircularProgress';
 import Colors from '../../theme/colors';
 import Typography from '../../theme/typography';
@@ -12,11 +11,16 @@ import { useRouter } from 'expo-router';
 
 import { getActivities, updateActivity } from '../../hooks/activites';
 import LottieView from 'lottie-react-native';
+import WaterIntakeModal from '../../components/WaterIntakeModal';
+import { axiosRequest } from '../../hooks/api';
 
 export default function Tracker() {
 
     const router = useRouter()
+
+    const [waterGoal, setWaterGoal] = useState(null)
     const [waterIntake, setWaterIntake] = useState(0);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const confettiRef = useRef(null);
 
@@ -33,7 +37,7 @@ export default function Tracker() {
 
         // const lastWaterIntake = new Date(activites?.lastWaterIntake);
 
-        if (newWaterIntake > 13) {
+        if (newWaterIntake > waterGoal) {
             ToastAndroid.showWithGravity(
                 "Goal achieved: You've reached your water intake goal!",
                 ToastAndroid.SHORT,
@@ -69,10 +73,48 @@ export default function Tracker() {
         // }
     }
 
+    function toggleWaterGoal() {
+        if (waterGoal) {
+            ToastAndroid.showWithGravity(
+                "You already have a goal to complete",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+            );
+        } else {
+            setModalVisible(prev => !prev)
+        }
+    }
+
+    async function handleGoalUpdate(quantity) {
+        const res = await axiosRequest('sessions/updateWaterIntake/', {
+            method: 'put',
+            data: {
+                value: quantity
+            }
+        }, false);
+
+        if (res.success) {
+            fetchWaterGoal()
+            setModalVisible(prev => !prev)
+        }
+    }
+
+    async function fetchWaterGoal() {
+        const res = await axiosRequest('sessions/getWaterIntake/', {
+            method: 'get'
+        }, false);
+
+        if (res.success) {
+            setWaterGoal(res.goal)
+        }
+    }
+
     useEffect(() => {
         (async () => {
             const activites = await getActivities();
             setWaterIntake(activites?.waterIntake || 0);
+
+            fetchWaterGoal()
         })();
     }, [])
 
@@ -83,20 +125,64 @@ export default function Tracker() {
                 <Text style={[Typography.captionText]}>Tap on the card below after your drank a glass of water to mark your progress.</Text>
 
                 <View style={styles.waterContainer}>
-                    <CircularProgress
-                        progress={Math.round((waterIntake / 13) * 100)}
-                        outerCircleColor={Colors.inputBG}
-                        progressCircleColor={Colors.primary}
-                        labelStyle={{
-                            color: Colors.secondary,
-                            fontSize: 18
-                        }}
-                        strokeWidth={5}
-                    />
-                    <Text style={[Typography.captionText, { marginTop: 10 }]}>Completed</Text>
-                    <Text style={Typography.heading3}>{waterIntake} / 13 glasses</Text>
-                    <Image source={waterBoy} style={styles.waterImage} />
+                    <View style={{ flex: 0.5 }}>
+                        <CircularProgress
+                            progress={
+                                waterGoal
+                                    ? Math.round((waterIntake / waterGoal) * 100)
+                                    : 0
+                            }
+                            outerCircleColor={Colors.inputBG}
+                            progressCircleColor={Colors.primary}
+                            labelStyle={{
+                                color: Colors.secondary,
+                                fontSize: 20
+                            }}
+                            strokeWidth={6}
+                        />
+                    </View>
+                    <View style={{ flex: 1, marginLeft: 20 }}>
+                        {waterGoal ? (
+                            <>
+                                <Text style={[Typography.captionText, { marginTop: 10 }]}>Completed</Text>
+                                <Text style={Typography.heading3}>{waterIntake} / {waterGoal} glasses</Text>
+                                <Pressable
+                                    onPress={handleWaterClick}
+                                    style={[
+                                        styles.cardBtn,
+                                        { backgroundColor: Colors.dark, marginTop: 5, width: '70%' }
+                                    ]}
+                                >
+                                    <Text style={{ fontWeight: 'bold', color: Colors.light }}>
+                                        Add Record
+                                    </Text>
+                                </Pressable>
+                            </>
+                        ) : (
+                            <>
+                                <Text style={[Typography.captionText, { marginTop: 10 }]}>
+                                    Set a water goal to get started
+                                </Text>
+                                <Pressable
+                                    onPress={toggleWaterGoal}
+                                    style={[
+                                        styles.cardBtn,
+                                        { backgroundColor: Colors.dark, marginTop: 5, width: '70%' }
+                                    ]}
+                                >
+                                    <Text style={{ fontWeight: 'bold', color: Colors.light }}>
+                                        Set my Goal
+                                    </Text>
+                                </Pressable>
+                            </>
+                        )}
+                    </View>
                 </View>
+
+                <WaterIntakeModal
+                    modalVisible={modalVisible} setModalVisible={setModalVisible}
+                    handleGoalUpdate={handleGoalUpdate}
+                />
 
                 <View style={styles.row}>
                     <View style={[styles.box, { backgroundColor: '#FDCE83' }]}>
@@ -115,20 +201,20 @@ export default function Tracker() {
                         </Pressable>
                     </View>
                     <View style={[styles.box, { backgroundColor: '#919AFF' }]}>
-                        <Text style={[Typography.heading3, { color: Colors.light }]}>Water Tracker</Text>
+                        <Text style={[Typography.heading3, { color: Colors.light }]}>Water Intake</Text>
                         <Text style={[Typography.captionText, { color: Colors.light, marginTop: -5 }]}>
-                            TAP TO MARK
+                            PERSONALIZED
                         </Text>
 
                         <Pressable
-                            onPress={handleWaterClick}
+                            onPress={toggleWaterGoal}
                             style={[
                                 styles.cardBtn,
                                 { backgroundColor: Colors.dark }
                             ]}
                         >
                             <Text style={{ fontWeight: 'bold', color: Colors.light }}>
-                                Add Record
+                                Set my Goal
                             </Text>
                         </Pressable>
                     </View>
@@ -148,7 +234,7 @@ export default function Tracker() {
                             { fontSize: 20, textAlign: 'center', width: '90%' }
                         ]}
                     >
-                        Can't Sleep ? Get Help 😊 
+                        Can't Sleep ? Get Help 😊
                     </Text>
                 </Pressable>
 
@@ -201,14 +287,15 @@ export default function Tracker() {
 const styles = StyleSheet.create({
     waterContainer: {
         width: '100%',
-        height: 180,
         borderRadius: 20,
-        marginTop: 80,
+        marginTop: 20,
         backgroundColor: Colors.cardBg,
         padding: 20,
 
         position: 'relative',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignContent: 'center',
         marginBottom: 10
     },
     waterImage: {

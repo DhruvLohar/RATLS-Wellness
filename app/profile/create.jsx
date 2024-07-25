@@ -11,7 +11,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Layout from "../../theme/layout";
 import Colors from "../../theme/colors";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Avatars } from "../../services/constants";
 import { axiosRequest } from "../../hooks/api";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -45,6 +45,7 @@ export default function createProfile() {
     const router = useRouter()
     const { refreshUser } = useSession()
 
+    const [unit, setUnit] = useState('months');
     const [image, setImage] = useState(null)
     const [avatar, setAvatar] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -67,6 +68,10 @@ export default function createProfile() {
 
         if (!image && avatar === -1) {
             alert('Please upload a proper image')
+        }
+
+        if (unit === 'years') {
+            values["meditationExperience"] = values["meditationExperience"] * 12;
         }
 
         refreshUser();
@@ -146,12 +151,26 @@ export default function createProfile() {
                         required: true,
                     }}
                     render={({ field: { onChange, value } }) => (
-                        <Info title={"Meditation Experience (in months)"}>
-                            <Input
-                                placeHolder="Meditation Experience (in months)"
-                                type='numeric'
-                                handleFormik={{ name: 'meditationExperience', onChange, value }}
-                            />
+                        <Info title={"Meditation Experience"}>
+                            <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Input
+                                        placeHolder="Meditation Experience"
+                                        type="numeric"
+                                        handleFormik={{ name: 'meditationExperience', onChange, value }}
+                                    />
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Picker
+                                        selectedValue={unit}
+                                        style={{ height: 50, width: 150 }}
+                                        onValueChange={(itemValue, itemIndex) => setUnit(itemValue)}
+                                    >
+                                        <Picker.Item label="Months" value="months" />
+                                        <Picker.Item label="Years" value="years" />
+                                    </Picker>
+                                </View>
+                            </View>
                         </Info>
                     )}
                     name="meditationExperience"

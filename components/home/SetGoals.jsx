@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Text, ToastAndroid, View } from "react-native";
 import Typography from "../../theme/typography";
 import Colors from "../../theme/colors";
 
@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from "react";
 import Input from "../Input";
 import Button from "../Button";
+import { axiosRequest } from "../../hooks/api";
 
 const schema = yup.object().shape({
     hours: yup.number().required().transform(value => (isNaN(value) ? undefined : value)).min(0).max(12).nullable(),
@@ -21,6 +22,7 @@ export default function SetGoals() {
         control,
         handleSubmit,
         formState: { errors },
+        reset
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
@@ -30,7 +32,26 @@ export default function SetGoals() {
     });
 
     async function handleSetGoal(values) {
+        let timeInMinutes = values.hours * 60 + values.minutes;
 
+        const res = await axiosRequest('sessions/updateTimeOnApp/', {
+            method: 'put',
+            data: {
+                value: timeInMinutes
+            }
+        });
+
+        if (res.success) {
+            ToastAndroid.showWithGravity(
+                "Your goal was recorded successfully",
+                ToastAndroid.LONG,
+                ToastAndroid.CENTER,
+            );
+            reset({
+                hours: null,
+                minutes: null,
+            });
+        }
     }
 
     return (
