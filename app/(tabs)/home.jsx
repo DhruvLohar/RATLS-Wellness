@@ -8,7 +8,7 @@ import Typography from "../../theme/typography";
 import PieChartView from "../../components/PieChartView";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { axiosRequest } from "../../hooks/api";
+import { axiosRequest, fetchFromAPI } from "../../hooks/api";
 import { isFirstLoginOfDay, getActivities, updateActivity } from "../../hooks/activites";
 import { Moods, timesince } from "../../services/constants";
 import LottieView from "lottie-react-native";
@@ -22,7 +22,9 @@ export default function Home() {
     const router = useRouter()
     const { session, refreshUser } = useSession();
 
+    const [moodMapData, setMoodMapData] = useState()
     const [todaysMood, setTodaysMood] = useState(null);
+    const [isFirstMood, setIsFirstMood] = useState(true)
     const [editMood, setEditMood] = useState(false)
     const [lastAppOpen, setAppOpen] = useState("")
 
@@ -74,7 +76,7 @@ export default function Home() {
                 let moodItem = Moods.find(item => item.name === mood);
                 setTodaysMood(moodItem);
 
-                refreshUser();
+                fetchMoodMapData();
                 triggerConfetti();
             } else {
                 ToastAndroid.showWithGravity(
@@ -86,16 +88,23 @@ export default function Home() {
         }
     }
 
+    async function fetchMoodMapData() {
+        const res = await fetchFromAPI('sessions/moodMapChartData/');
+        
+        setMoodMapData(res?.data)
+    }
+
     useEffect(() => {
         updateStreak();
+        fetchMoodMapData();
 
-        (async () => {
-            const firstLogin = await isFirstLoginOfDay();
-            const activites = await getActivities();
-            setAppOpen(activites?.lastAppOpen);
+        // (async () => {
+        //     const firstLogin = await isFirstLoginOfDay();
+        //     const activites = await getActivities();
+        //     setAppOpen(activites?.lastAppOpen);
 
-            console.log("first hai ?", firstLogin)
-        })();
+        //     console.log("first hai ?", firstLogin)
+        // })();
     }, [])
 
     useEffect(() => {
@@ -105,6 +114,7 @@ export default function Home() {
                 if (session?.moodMap && Object.keys(session?.moodMap).includes(today)) {
                     let mood = Moods.find(item => item.name === session.moodMap[today]);
                     setTodaysMood(mood)
+                    setIsFirstMood(false)
                 }
             }
         })();
@@ -142,6 +152,7 @@ export default function Home() {
                     handleMoodSelect={handleMoodSelect}
                     editMood={editMood}
                     setEditMood={setEditMood}
+                    isFirstMood={isFirstMood}
                 />
 
                 {/* SETTING USERS GOAL TO BE ON APP */}
@@ -168,10 +179,13 @@ export default function Home() {
                     desc={"A bar chart showing time you spend over the last week on the app"}
                 />
 
-                <PieChartView
-                    title={"Your mood over the past month."}
-                    desc={"This is your mood map, showing your mood distribution over the month."}
-                />
+                {moodMapData && (
+                    <PieChartView
+                        title={"Your mood over the past month."}
+                        desc={"This is your mood map, showing your mood distribution over the month."}
+                        data={moodMapData}
+                    />
+                )}
 
             </ScrollView>
             <View style={Layout.lottie} pointerEvents="none">

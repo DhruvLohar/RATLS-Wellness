@@ -32,10 +32,13 @@ export default function Tracker() {
         const now = new Date();
         const activites = await getActivities();
 
-        // const oneHourInMilliseconds = 3600 * 1000;
         const newWaterIntake = (activites?.waterIntake || 0) + 1;
+        const lastWaterIntake = new Date(activites?.lastWaterIntake);
 
-        // const lastWaterIntake = new Date(activites?.lastWaterIntake);
+        if (now.toLocaleDateString('en-US') !== lastWaterIntake.toLocaleDateString('en-US')) {
+            await updateActivity('lastWaterIntake', now.toISOString());
+            await updateActivity('waterIntake', 0); 
+        }
 
         if (newWaterIntake > waterGoal) {
             ToastAndroid.showWithGravity(
@@ -49,28 +52,6 @@ export default function Tracker() {
             setWaterIntake(newWaterIntake);
             triggerConfetti();
         }
-
-        // const isOneHourGap = now - lastWaterIntake >= oneHourInMilliseconds;
-        // if (!activites?.lastWaterIntake || isOneHourGap) {
-        //     ToastAndroid.showWithGravity(
-        //         "Goal achieved: You've reached your water intake goal!",
-        //         ToastAndroid.SHORT,
-        //         ToastAndroid.CENTER,
-        //     );
-        //     if (newWaterIntake >= 3000) {
-        //     } else {
-        //         await updateActivity('lastWaterIntake', now.toISOString());
-        //         await updateActivity('waterIntake', newWaterIntake);
-        //         setWaterIntake(newWaterIntake);
-        //         triggerConfetti();
-        //     }
-        // } else {
-        //     ToastAndroid.showWithGravity(
-        //         "You need to wait at least 1 hour before recording another water intake.",
-        //         ToastAndroid.SHORT,
-        //         ToastAndroid.CENTER,
-        //     );
-        // }
     }
 
     function toggleWaterGoal() {

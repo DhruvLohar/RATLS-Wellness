@@ -7,7 +7,8 @@ import { TextButton } from "../Button"
 
 export default function MoodSelector({ 
     todaysMood, handleMoodSelect,
-    editMood, setEditMood 
+    editMood, setEditMood,
+    isFirstMood
 }) {
 
     const EmojiItem = ({ mood, index }) => (
@@ -31,11 +32,13 @@ export default function MoodSelector({
                 <Text style={[Typography.heading3, {marginRight: 'auto'}]}>
                     {todaysMood ? "Your mood for today is" : "How are you feeling today ?"}
                 </Text>
-                <TextButton 
-                    title="Edit Mood" 
-                    textStyle={{ color: Colors.muted }}
-                    onPress={() => setEditMood(prev => !prev)}
-                />
+                {!isFirstMood && (
+                    <TextButton 
+                        title="Edit Mood" 
+                        textStyle={{ color: Colors.muted }}
+                        onPress={() => setEditMood(prev => !prev)}
+                    />
+                )}
             </View>
             <ScrollView
                 horizontal

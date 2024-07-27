@@ -81,7 +81,7 @@ export default function SetGoals() {
     return (
         <View style={{ marginVertical: 20, width: '100%' }}>
 
-            <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+            <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                 <Text style={[Typography.heading3, { alignSelf: 'flex-start', marginRight: 'auto' }]}>
                     {!timeToSpendApp
                         ? "Set your goals ⌛"
@@ -90,7 +90,8 @@ export default function SetGoals() {
                 </Text>
                 {timeToSpendApp && (
                     <Text style={[Typography.heading3, {
-                        color: Colors.muted
+                        color: Colors.muted,
+                        fontSize: 14
                     }]}>{convertMinutesToHoursAndMinutes(timeToSpendApp)}</Text>
                 )}
             </View>

@@ -13,13 +13,13 @@ const Typography = StyleSheet.create({
         fontFamily: 'Poppins_800ExtraBold', // Ensure you have the Poppins font installed
     },
     heading3: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '600',
         color: Colors.dark, // Adjust color as needed
         fontFamily: 'Poppins_600SemiBold', // Ensure you have the Poppins font installed
     },
     bodyText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '400',
         color: Colors.dark,
         fontFamily: 'Poppins_400Regular',

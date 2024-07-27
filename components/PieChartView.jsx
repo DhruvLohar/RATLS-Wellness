@@ -2,27 +2,18 @@ import { PieChart } from "react-native-gifted-charts"
 import Colors from "../theme/colors"
 import Typography from "../theme/typography"
 import { Text, View } from "react-native"
-import { useEffect, useState } from "react"
-import { fetchFromAPI } from "../hooks/api"
+import { useState } from "react"
 
 
-export default function PieChartView({ title, desc }) {
+export default function PieChartView({ 
+    title, desc, data
+}) {
 
     const [emotion, setEmotion] = useState(null)
-    const [data, setData] = useState([])
 
     function handleLabelPress(e) {
         setEmotion(e)
     }
-
-    useEffect(() => {
-        async function fetchData() {
-            const { data } = await fetchFromAPI('sessions/moodMapChartData/');
-            
-            setData(data)
-        }
-        fetchData()
-    }, []);
 
     return (
         <View style={{ width: '100%', marginVertical: 15, justifyContent: 'center', alignItems: 'center' }}>
