@@ -13,6 +13,7 @@ import { getActivities, updateActivity } from '../../hooks/activites';
 import LottieView from 'lottie-react-native';
 import WaterIntakeModal from '../../components/WaterIntakeModal';
 import { axiosRequest } from '../../hooks/api';
+import SleepGraph from '../../components/stats/SleepGraph';
 
 export default function Tracker() {
 
@@ -29,29 +30,8 @@ export default function Tracker() {
     }
 
     async function handleWaterClick() {
-        const now = new Date();
-        const activites = await getActivities();
-
-        const newWaterIntake = (activites?.waterIntake || 0) + 1;
-        const lastWaterIntake = new Date(activites?.lastWaterIntake);
-
-        if (now.toLocaleDateString('en-US') !== lastWaterIntake.toLocaleDateString('en-US')) {
-            await updateActivity('lastWaterIntake', now.toISOString());
-            await updateActivity('waterIntake', 0); 
-        }
-
-        if (newWaterIntake > waterGoal) {
-            ToastAndroid.showWithGravity(
-                "Goal achieved: You've reached your water intake goal!",
-                ToastAndroid.SHORT,
-                ToastAndroid.CENTER,
-            );
-        } else {
-            await updateActivity('lastWaterIntake', now.toISOString());
-            await updateActivity('waterIntake', newWaterIntake);
-            setWaterIntake(newWaterIntake);
-            triggerConfetti();
-        }
+        await updateWaterIntake()
+        triggerConfetti();
     }
 
     function toggleWaterGoal() {
@@ -67,7 +47,7 @@ export default function Tracker() {
     }
 
     async function handleGoalUpdate(values) {
-        const res = await axiosRequest('sessions/updateWaterIntake/', {
+        const res = await axiosRequest('sessions/updateWaterGoal/', {
             method: 'put',
             data: {
                 value: values.glasses
@@ -75,28 +55,42 @@ export default function Tracker() {
         }, false);
 
         if (res.success) {
-            fetchWaterGoal()
+            fetchWaterGoalAndIntake()
             setModalVisible(prev => !prev)
         }
     }
 
-    async function fetchWaterGoal() {
-        const res = await axiosRequest('sessions/getWaterIntake/', {
+    async function updateWaterIntake(intake) {
+        const res = await axiosRequest('sessions/updateWaterIntake/', {
+            method: 'put',
+            data: {}
+        }, false);
+
+        if (res.success) {
+            fetchWaterGoalAndIntake()
+        }
+    }
+
+    async function fetchWaterGoalAndIntake() {
+        const res = await axiosRequest('sessions/getWaterGoal/', {
+            method: 'get'
+        }, false);
+
+        const intakeRes = await axiosRequest('sessions/getWaterIntake/', {
             method: 'get'
         }, false);
 
         if (res.success) {
             setWaterGoal(res.goal)
         }
+
+        if (intakeRes.success) {
+            setWaterIntake(intakeRes.intake)
+        }
     }
 
     useEffect(() => {
-        (async () => {
-            const activites = await getActivities();
-            setWaterIntake(activites?.waterIntake || 0);
-
-            fetchWaterGoal()
-        })();
+        fetchWaterGoalAndIntake()
     }, [])
 
     return (
@@ -219,36 +213,7 @@ export default function Tracker() {
                     </Text>
                 </Pressable>
 
-                <View style={{ width: '100%', marginVertical: 15 }}>
-                    <Text style={[Typography.heading3]}>Sleep Tracker</Text>
-                    <Text style={[Typography.bodyText, {
-                        marginBottom: 15,
-                        fontSize: 15,
-                        color: Colors.muted
-                    }]}>Your Sleep Duration for this week in hours.</Text>
-
-                    <LineChart
-                        areaChart
-                        curved
-                        hideDataPoints
-                        data={[
-                            { value: 8, label: 'Mon' },
-                            { value: 16, label: 'Tue' },
-                            { value: 8, label: 'Wed' },
-                            { value: 13, label: 'Thr' },
-                            { value: 9, label: 'Fri' },
-                            { value: 7.5, label: 'Sat' },
-                            { value: 6, label: 'Sun' },
-                        ]}
-                        spacing={68}
-                        color={Colors.primary}
-                        startFillColor={Colors.secondary}
-                        rulesType="solid"
-                        yAxisThickness={0}
-                        xAxisThickness={0}
-                        noOfSections={6}
-                    />
-                </View>
+                <SleepGraph />
             </ScrollView>
             <View style={Layout.lottie} pointerEvents="none">
                 <LottieView

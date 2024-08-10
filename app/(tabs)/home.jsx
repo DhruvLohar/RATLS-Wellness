@@ -16,6 +16,8 @@ import BarChartView from "../../components/BarChartView";
 import SetGoals from "../../components/home/SetGoals";
 import MoodSelector from "../../components/home/MoodSelector";
 import QuoteCarousel from "../../components/home/QuoteCarousel";
+import SleepTrackingModal from "../../components/modals/SleepTrackingModal";
+import TimeSpentGraph from "../../components/stats/TImeSpentGraph";
 
 export default function Home() {
 
@@ -122,6 +124,7 @@ export default function Home() {
 
     return (
         <>
+            <SleepTrackingModal />
             <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
                 <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'space-between' }]}>
                     <Link href={"/profile"}>
@@ -174,10 +177,11 @@ export default function Home() {
                     ))}
                 </View>
 
-                <BarChartView
+                {/* <BarChartView
                     title={"Time Spent in Last Week"}
                     desc={"A bar chart showing time you spend over the last week on the app"}
-                />
+                /> */}
+                <TimeSpentGraph />
 
                 {moodMapData && (
                     <PieChartView

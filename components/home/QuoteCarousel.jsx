@@ -10,10 +10,6 @@ export default function QuoteCarousel() {
 
     const width = Dimensions.get('window').width;
 
-    const [current, setCurrent] = useState(
-        Quotes[Math.floor(Math.random() * Quotes.length)]
-    );
-
     const generateUniqueRandomArray = (length, n) => {
         if (length > n + 1) {
             throw new Error('Length cannot be greater than the range of unique numbers available.');

@@ -144,10 +144,6 @@ const Quotes = [
         "author": "Nanea Hoffman"
     },
     {
-        "quote": "The most beautiful people we have known are those who have known defeat, known suffering, known struggle, known loss, and have found their way out of the depths. These persons have an appreciation, a sensitivity, and an understanding of life that fills them with compassion, gentleness, and a deep loving concern. Beautiful people do not just happen.",
-        "author": "Elisabeth Kübler-Ross"
-    },
-    {
         "quote": "I understand your pain. Trust me, I do. I’ve seen people go from the darkest moments in their lives to living a happy, fulfilling life. You can do it too. I believe in you. You are not a burden. You will never be a burden.",
         "author": "Sophie Turner"
     },
