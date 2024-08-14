@@ -12,19 +12,38 @@ import MyMedia from '../../components/MyMedia';
 import { TextButton } from '../../components/Button';
 import { Filter } from 'iconsax-react-native';
 
+const yogaYTUrls = [
+    { url: "4muXiVVuTUk", time: 12.41 },
+    { url: "ZhQ_2JU4Nv8", time: 13.49 },
+    { url: "sTANio_2E0Q", time: 20.55 },
+    { url: "hJbRpHZr_d0", time: 27.54 },
+    { url: "yUBzHThl-d0", time: 30.54 },
+    { url: "vbgxIwQoyN4", time: 40.39 },
+]
+
+const meditationYTUrls = [
+    { url: "uTN29kj7e-w", time: 11.57 },
+    { url: "vj0JDwQLof4", time: 9.18 },
+    { url: "tqhxMUm7XXU", time: 13.14 },
+    { url: "VpHz8Mb13_Y", time: 5.37 },
+    { url: "JhLgDfTfk84", time: 39.47 },
+    { url: "z0GtmPnqAd8", time: 15.28 },
+]
+
 export default function Meditate() {
 
     const router = useRouter()
-    const [lowToHigh, setLowToHigh] = useState(true)
-    const [youtubeUrls, setYoutubeUrls] = useState([
-        "1xRX1MuoImw",
-        "jb9B39zrzEo",
-        "xE_pGjpycac"
-    ]);
+    const [lowToHighYoga, setLowToHighYoga] = useState(true);
+    const [lowToHighMeditation, setLowToHighMeditation] = useState(true);
 
-    function toggleYTUrls() {
-        setYoutubeUrls(prev => prev.reverse())
-        setLowToHigh(prev => !prev)
+    function toggleYogaYTUrls() {
+        yogaYTUrls.sort((a, b) => (lowToHighYoga ? a.time - b.time : b.time - a.time));
+        setLowToHighYoga(prev => !prev);
+    }
+
+    function toggleMeditationYTUrls() {
+        meditationYTUrls.sort((a, b) => (lowToHighMeditation ? a.time - b.time : b.time - a.time));
+        setLowToHighMeditation(prev => !prev);
     }
 
     return (
@@ -64,24 +83,46 @@ export default function Meditate() {
 
             <MyMedia />
 
-            <View style={{ width: '100%' ,flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
-                <Text style={[Typography.heading3, {marginRight: 'auto'}]}>Featured Yoga Lessons</Text>
+            {/* Yoga Lessons Section */}
+            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+                <Text style={[Typography.heading3, { marginRight: 'auto', width: '60%' }]}>Featured Yoga Lessons</Text>
                 <Filter color={Colors.muted} size={20} />
                 <TextButton
-                    title={lowToHigh ? "Shortest First" : "Longest First"}
+                    title={lowToHighYoga ? "Shortest First" : "Longest First"}
                     textStyle={{ color: Colors.muted }}
-                    onPress={toggleYTUrls}
+                    onPress={toggleYogaYTUrls}
                 />
             </View>
 
-            {youtubeUrls.map(urls => (
+            {yogaYTUrls.map(({ url, time }, index) => (
                 <YoutubePlayer
-                    key={urls}
+                    key={index}
                     width={"100%"}
                     height={250}
-                    videoId={urls}
+                    videoId={url}
                 />
             ))}
+
+            {/* Meditation Lessons Section */}
+            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+                <Text style={[Typography.heading3, { marginRight: 'auto', width: '60%' }]}>Featured Meditation Lessons</Text>
+                <Filter color={Colors.muted} size={20} />
+                <TextButton
+                    title={lowToHighMeditation ? "Shortest First" : "Longest First"}
+                    textStyle={{ color: Colors.muted }}
+                    onPress={toggleMeditationYTUrls}
+                />
+            </View>
+
+            {meditationYTUrls.map(({ url, time }, index) => (
+                <YoutubePlayer
+                    key={index}
+                    width={"100%"}
+                    height={250}
+                    videoId={url}
+                />
+            ))}
+
 
         </ScrollView>
     );
