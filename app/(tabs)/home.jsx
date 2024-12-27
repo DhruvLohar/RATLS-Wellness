@@ -124,7 +124,7 @@ export default function Home() {
 
     return (
         <>
-            <SleepTrackingModal />
+            {/* <SleepTrackingModal /> */}
             <ScrollView style={[Layout.screenView]} contentContainerStyle={{ alignItems: 'flex-start' }}>
                 <View style={[Layout.flexRowCenter, { width: '100%', justifyContent: 'space-between' }]}>
                     <Link href={"/profile"}>

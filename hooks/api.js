@@ -1,8 +1,9 @@
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 
-// export const API_URL = "http://192.168.1.13:3000/";
-export const API_URL = "https://app.reachandteach.in/"
+// export const API_URL = "http://192.168.110.42:3000/";
+export const API_URL = "https://ratls.proconsentinel.com/";
+// export const API_URL = "https://app.reachandteach.in/"
 
 axios.defaults.baseURL = API_URL;
 
