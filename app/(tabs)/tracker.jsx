@@ -14,6 +14,7 @@ import LottieView from 'lottie-react-native';
 import WaterIntakeModal from '../../components/WaterIntakeModal';
 import { axiosRequest } from '../../hooks/api';
 import SleepGraph from '../../components/stats/SleepGraph';
+import { schedulePushNotification } from '../../services/notification';
 
 export default function Tracker() {
 
@@ -90,8 +91,20 @@ export default function Tracker() {
     }
 
     useEffect(() => {
-        fetchWaterGoalAndIntake()
+        fetchWaterGoalAndIntake();
+        const timer = setTimeout(() => {
+            pushNotification();
+        }, 10000);
+
+        return () => clearTimeout(timer);
     }, [])
+
+    async function pushNotification() {
+        await schedulePushNotification({
+            title: "Drink Water!",
+            body: "Don't forget to drink water today"
+        });
+    }
 
     return (
         <>
@@ -196,7 +209,8 @@ export default function Tracker() {
                 </View>
 
                 <Pressable
-                    onPress={() => router.push("/(tabs)/meditate")}
+                    // onPress={() => router.push("/(tabs)/meditate")}
+                    onPress={pushNotification}
                     style={[styles.quoteContainer, Layout.cardView, { padding: 0, borderWidth: 0 }]}
                 >
                     <Image

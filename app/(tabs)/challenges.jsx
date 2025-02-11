@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from "expo-router";
 
 import Layout from "../../theme/layout";
 import Typography from "../../theme/typography";
+import { schedulePushNotification } from '../../services/notification';
 
 export default function Challenges() {
 
@@ -17,6 +18,21 @@ export default function Challenges() {
         [{ "title": "Self care", "slug": "self_care" },
         { "title": "Fix your sleep schedule", "slug": "sleep_schedule" }]
     ]
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            pushNotification();
+        }, 8000);
+
+        return () => clearTimeout(timer);
+    }, [])
+
+    async function pushNotification() {
+        await schedulePushNotification({
+            title: "Daily Challenge Reminder",
+            body: "Don't forget to complete your daily challenge today!",
+        });
+    }
 
 
     return (

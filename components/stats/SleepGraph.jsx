@@ -17,6 +17,7 @@ export default function SleepGraph() {
         }, false);
 
         if (res.success) {
+            console.log(res.data)
             setPrevWeekData(res.data);
         }
     }
